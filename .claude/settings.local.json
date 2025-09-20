@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(chmod:*)",
+      "Bash(sw_vers)",
+      "Bash(brew install:*)",
+      "Bash(./verify-docker.sh:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker-compose up:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

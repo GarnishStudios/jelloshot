@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: callsheet_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: callsheet
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - callsheet_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: callsheet_backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/callsheet
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-here-change-in-production}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://frontend:5173
+    volumes:
+      - ./backend:/app
+      - backend_uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - callsheet_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: callsheet_frontend
+    environment:
+      VITE_API_URL: http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - callsheet_network
+    command: npm run dev -- --host
+
+volumes:
+  postgres_data:
+  backend_uploads:
+
+networks:
+  callsheet_network:
+    driver: bridge
