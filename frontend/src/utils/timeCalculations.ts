@@ -27,10 +27,10 @@ export function calculateTotalDuration(items: { shot_duration: number }[]): numb
   return items.reduce((total, item) => total + item.shot_duration, 0);
 }
 
-export function recalculateStartTimes(
-  items: { shot_duration: number; order_index: number }[],
+export function recalculateStartTimes<T extends { shot_duration: number; order_index: number }>(
+  items: T[],
   callTime: string
-): { start_time: string; order_index: number }[] {
+): (T & { start_time: string })[] {
   let currentTime = parseTime(callTime);
 
   return items

@@ -49,7 +49,17 @@ export const ShotlistDetail: React.FC = () => {
         shotlistItemsService.getShotlistItems(id!)
       ]);
       setShotlist(shotlistData);
-      setItems(itemsData.sort((a, b) => a.order_index - b.order_index));
+
+      // Sort items by order_index
+      const sortedItems = itemsData.sort((a, b) => a.order_index - b.order_index);
+
+      // Calculate start times if call time is set
+      if (shotlistData.call_time) {
+        const itemsWithTimes = recalculateStartTimes(sortedItems, shotlistData.call_time);
+        setItems(itemsWithTimes);
+      } else {
+        setItems(sortedItems);
+      }
     } catch (error) {
       console.error('Failed to fetch shotlist details:', error);
     } finally {
@@ -78,7 +88,7 @@ export const ShotlistDetail: React.FC = () => {
     // Recalculate start times if call time is set
     if (shotlist?.call_time) {
       const itemsWithTimes = recalculateStartTimes(updatedItems, shotlist.call_time);
-      setItems(itemsWithTimes as ShotlistItem[]);
+      setItems(itemsWithTimes);
     } else {
       setItems(updatedItems);
     }
@@ -104,7 +114,7 @@ export const ShotlistDetail: React.FC = () => {
       const updatedItems = [...items, createdItem];
       if (shotlist?.call_time) {
         const itemsWithTimes = recalculateStartTimes(updatedItems, shotlist.call_time);
-        setItems(itemsWithTimes as ShotlistItem[]);
+        setItems(itemsWithTimes);
       } else {
         setItems(updatedItems);
       }
@@ -126,7 +136,7 @@ export const ShotlistDetail: React.FC = () => {
       // Recalculate times if duration changed
       if (shotlist?.call_time && updates.shot_duration !== undefined) {
         const itemsWithTimes = recalculateStartTimes(updatedItems, shotlist.call_time);
-        setItems(itemsWithTimes as ShotlistItem[]);
+        setItems(itemsWithTimes);
       } else {
         setItems(updatedItems);
       }
@@ -140,11 +150,17 @@ export const ShotlistDetail: React.FC = () => {
       await shotlistItemsService.deleteItem(itemId);
       const updatedItems = items.filter(item => item.id !== itemId);
 
+      // Re-index and recalculate times
+      const reindexedItems = updatedItems.map((item, index) => ({
+        ...item,
+        order_index: index
+      }));
+
       if (shotlist?.call_time) {
-        const itemsWithTimes = recalculateStartTimes(updatedItems, shotlist.call_time);
-        setItems(itemsWithTimes as ShotlistItem[]);
+        const itemsWithTimes = recalculateStartTimes(reindexedItems, shotlist.call_time);
+        setItems(itemsWithTimes);
       } else {
-        setItems(updatedItems);
+        setItems(reindexedItems);
       }
     } catch (error) {
       console.error('Failed to delete item:', error);

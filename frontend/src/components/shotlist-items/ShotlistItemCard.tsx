@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { ShotlistItem } from '../../types';
-import { formatDuration } from '../../utils/timeCalculations';
+import { formatDuration, calculateEndTime } from '../../utils/timeCalculations';
 import { shotlistItemsService } from '../../services/shotlist-items.service';
 
 interface ShotlistItemCardProps {
@@ -149,11 +149,19 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
                 <div className="flex items-center justify-between flex-1">
                   <div>
                     <h3 className="font-medium text-gray-900">{item.shot_name}</h3>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-3 mt-1 text-sm">
+                      <span className="font-mono font-semibold text-gray-800">
+                        {item.start_time || '--:--'}
+                      </span>
                       {item.start_time && (
-                        <span className="font-mono">{item.start_time}</span>
+                        <>
+                          <span className="text-gray-400">→</span>
+                          <span className="font-mono text-gray-600">
+                            {calculateEndTime(item.start_time, item.shot_duration)}
+                          </span>
+                        </>
                       )}
-                      <span>{formatDuration(item.shot_duration)}</span>
+                      <span className="text-gray-500">({formatDuration(item.shot_duration)})</span>
                       {item.time_of_day && (
                         <span className={`px-2 py-0.5 rounded-full text-xs ${timeOfDayColors[item.time_of_day]}`}>
                           {item.time_of_day}
