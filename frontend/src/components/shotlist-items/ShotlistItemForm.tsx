@@ -16,7 +16,7 @@ export const ShotlistItemForm: React.FC<ShotlistItemFormProps> = ({
     shot_name: initialData?.shot_name || '',
     shot_details: initialData?.shot_details || '',
     shot_duration: initialData?.shot_duration || 10,
-    time_of_day: initialData?.time_of_day || 'morning' as const,
+    scheduled_time: initialData?.scheduled_time || '',
     notes: initialData?.notes || ''
   });
 
@@ -64,19 +64,18 @@ export const ShotlistItemForm: React.FC<ShotlistItemFormProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Time of Day
+            Scheduled Time (Optional)
           </label>
-          <select
+          <input
+            type="time"
             className="input-field mt-1"
-            value={formData.time_of_day}
-            onChange={(e) => setFormData({ ...formData, time_of_day: e.target.value as any })}
-          >
-            <option value="dawn">Dawn</option>
-            <option value="morning">Morning</option>
-            <option value="afternoon">Afternoon</option>
-            <option value="evening">Evening</option>
-            <option value="night">Night</option>
-          </select>
+            value={formData.scheduled_time}
+            onChange={(e) => setFormData({ ...formData, scheduled_time: e.target.value })}
+            placeholder="HH:MM"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Set a specific time for this shot (separate from calculated start time)
+          </p>
         </div>
 
         <div>

@@ -42,9 +42,9 @@ export interface ShotlistItem {
   shotlist_id: string;
   shot_name: string;
   shot_details?: string;
-  time_of_day?: 'dawn' | 'morning' | 'afternoon' | 'evening' | 'night';
+  scheduled_time?: string; // 24-hour format HH:MM
   shot_duration: number; // in minutes
-  start_time?: string;
+  start_time?: string; // Calculated start time based on order
   notes?: string;
   shot_reference_image?: string;
   order_index: number;

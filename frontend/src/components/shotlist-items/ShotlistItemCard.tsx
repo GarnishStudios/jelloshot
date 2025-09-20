@@ -24,7 +24,7 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
     shot_name: item.shot_name,
     shot_details: item.shot_details || '',
     shot_duration: item.shot_duration,
-    time_of_day: item.time_of_day || 'morning',
+    scheduled_time: item.scheduled_time || '',
     notes: item.notes || ''
   });
 
@@ -53,7 +53,7 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
       shot_name: item.shot_name,
       shot_details: item.shot_details || '',
       shot_duration: item.shot_duration,
-      time_of_day: item.time_of_day || 'morning',
+      scheduled_time: item.scheduled_time || '',
       notes: item.notes || ''
     });
     setIsEditing(false);
@@ -75,13 +75,6 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
     }
   };
 
-  const timeOfDayColors = {
-    dawn: 'bg-purple-100 text-purple-800',
-    morning: 'bg-yellow-100 text-yellow-800',
-    afternoon: 'bg-blue-100 text-blue-800',
-    evening: 'bg-orange-100 text-orange-800',
-    night: 'bg-indigo-100 text-indigo-800'
-  };
 
   return (
     <div
@@ -129,19 +122,15 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Time of Day
+                        Scheduled Time
                       </label>
-                      <select
+                      <input
+                        type="time"
                         className="input-field"
-                        value={editForm.time_of_day}
-                        onChange={(e) => setEditForm({ ...editForm, time_of_day: e.target.value as any })}
-                      >
-                        <option value="dawn">Dawn</option>
-                        <option value="morning">Morning</option>
-                        <option value="afternoon">Afternoon</option>
-                        <option value="evening">Evening</option>
-                        <option value="night">Night</option>
-                      </select>
+                        value={editForm.scheduled_time}
+                        onChange={(e) => setEditForm({ ...editForm, scheduled_time: e.target.value })}
+                        placeholder="HH:MM"
+                      />
                     </div>
                   </div>
                 </div>
@@ -150,21 +139,21 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
                   <div>
                     <h3 className="font-medium text-gray-900">{item.shot_name}</h3>
                     <div className="flex items-center gap-3 mt-1 text-sm">
-                      <span className="font-mono font-semibold text-gray-800">
+                      <span className="font-mono font-semibold text-gray-800" title="Calculated start time">
                         {item.start_time || '--:--'}
                       </span>
                       {item.start_time && (
                         <>
                           <span className="text-gray-400">→</span>
-                          <span className="font-mono text-gray-600">
+                          <span className="font-mono text-gray-600" title="Calculated end time">
                             {calculateEndTime(item.start_time, item.shot_duration)}
                           </span>
                         </>
                       )}
                       <span className="text-gray-500">({formatDuration(item.shot_duration)})</span>
-                      {item.time_of_day && (
-                        <span className={`px-2 py-0.5 rounded-full text-xs ${timeOfDayColors[item.time_of_day]}`}>
-                          {item.time_of_day}
+                      {item.scheduled_time && (
+                        <span className="text-blue-600 font-mono" title="Scheduled time">
+                          📅 {item.scheduled_time}
                         </span>
                       )}
                     </div>
@@ -238,6 +227,13 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
         {/* Expanded Details */}
         {isExpanded && !isEditing && (
           <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
+            {item.scheduled_time && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-700">Scheduled Time</h4>
+                <p className="text-sm text-gray-600 mt-1 font-mono">{item.scheduled_time}</p>
+              </div>
+            )}
+
             {item.shot_details && (
               <div>
                 <h4 className="text-sm font-medium text-gray-700">Shot Details</h4>
@@ -301,6 +297,20 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
         {/* Edit Form Expanded */}
         {isEditing && (
           <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Scheduled Time
+              </label>
+              <input
+                type="time"
+                className="input-field"
+                value={editForm.scheduled_time}
+                onChange={(e) => setEditForm({ ...editForm, scheduled_time: e.target.value })}
+                placeholder="HH:MM"
+              />
+              <p className="text-xs text-gray-500 mt-1">Optional: Set a specific scheduled time for this shot</p>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Shot Details
