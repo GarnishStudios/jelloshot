@@ -10,7 +10,14 @@
       "Bash(brew install:*)",
       "Bash(./verify-docker.sh:*)",
       "Bash(docker-compose:*)",
-      "Bash(docker-compose up:*)"
+      "Bash(docker-compose up:*)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker compose down:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker ps:*)"
     ],
     "deny": [],
     "ask": []
