@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date, time
 from uuid import UUID
 from enum import Enum
 
@@ -18,6 +18,13 @@ class ProjectBase(BaseModel):
     producer: Optional[str] = None
     status: ProjectStatus = ProjectStatus.PRE_PRODUCTION
 
+    # New time-related fields
+    shoot_date: Optional[date] = None
+    call_time: Optional[time] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
+    location: Optional[str] = None
+
 class ProjectCreate(ProjectBase):
     pass
 
@@ -28,6 +35,13 @@ class ProjectUpdate(BaseModel):
     director: Optional[str] = None
     producer: Optional[str] = None
     status: Optional[ProjectStatus] = None
+
+    # New time-related fields
+    shoot_date: Optional[date] = None
+    call_time: Optional[time] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
+    location: Optional[str] = None
 
 class ProjectInDB(ProjectBase):
     id: UUID

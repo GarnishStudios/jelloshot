@@ -27,14 +27,31 @@ export const ProjectDetail: React.FC = () => {
 
   const fetchProjectDetails = async () => {
     try {
+      // Check authentication first
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('No authentication token found');
+        window.location.href = '/login';
+        return;
+      }
+
       const [projectData, shotlistsData] = await Promise.all([
         projectsService.getProject(id!),
         shotlistsService.getProjectShotlists(id!)
       ]);
       setProject(projectData);
       setShotlists(shotlistsData);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch project details:', error);
+      if (error.response?.status === 401) {
+        alert('Your session has expired. Please log in again.');
+        window.location.href = '/login';
+      } else if (error.response?.status === 404) {
+        setProject(null); // This will show "Project not found"
+      } else {
+        console.error('Error fetching project:', error);
+        // Still set loading to false to show some content instead of infinite loading
+      }
     } finally {
       setLoading(false);
     }

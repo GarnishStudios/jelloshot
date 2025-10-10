@@ -122,3 +122,93 @@ def reorder_shotlist_items(
         call_time=db_shotlist.call_time
     )
     return items
+
+@router.post("/shotlist-items/{item_id}/upload-image")
+async def upload_image(
+    item_id: UUID,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user)
+):
+    import os
+    import uuid
+    from PIL import Image
+    import io
+
+    db_item = item_service.get_shotlist_item(db, item_id=item_id)
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
+    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
+    if db_project.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to upload image for this item")
+
+    # Validate file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image")
+
+    # Read the uploaded file
+    contents = await file.read()
+
+    # Process the image with PIL
+    try:
+        image = Image.open(io.BytesIO(contents))
+
+        # Convert to RGB if necessary (handles PNG with transparency, etc.)
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+
+        # Determine target size based on original image aspect ratio
+        original_width, original_height = image.size
+        aspect_ratio = original_width / original_height
+
+        # Choose target format based on aspect ratio
+        if aspect_ratio > 1.5:  # Wide image -> 16:9
+            target_size = (1920, 1080)
+        elif aspect_ratio < 0.75:  # Tall image -> 9:16
+            target_size = (1080, 1920)
+        else:  # Square-ish image -> 1:1
+            target_size = (1080, 1080)
+
+        # Calculate resize dimensions to fit within target while maintaining aspect ratio
+        image.thumbnail(target_size, Image.Resampling.LANCZOS)
+
+        # Create a new image with target size and white background
+        new_image = Image.new('RGB', target_size, (255, 255, 255))
+
+        # Calculate position to center the resized image
+        x = (target_size[0] - image.size[0]) // 2
+        y = (target_size[1] - image.size[1]) // 2
+
+        # Paste the resized image onto the center of the new image
+        new_image.paste(image, (x, y))
+
+        # Generate unique filename
+        file_extension = '.jpg'  # Always save as JPG for consistency
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+
+        # Ensure uploads directory exists
+        uploads_dir = "static/uploads"
+        os.makedirs(uploads_dir, exist_ok=True)
+
+        # Save the processed image
+        file_path = os.path.join(uploads_dir, unique_filename)
+        new_image.save(file_path, "JPEG", quality=85, optimize=True)
+
+        # Create URL for the image
+        image_url = f"/static/uploads/{unique_filename}"
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+
+    # Update the item with the image URL
+    from app.schemas.shotlist_item import ShotlistItemUpdate
+    update_data = ShotlistItemUpdate(shot_reference_image=image_url)
+    updated_item = item_service.update_shotlist_item(
+        db=db,
+        item_id=item_id,
+        item=update_data
+    )
+
+    return {"url": image_url}

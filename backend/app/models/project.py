@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Enum, Time, Date
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -24,6 +24,14 @@ class Project(Base):
     director = Column(String(255))
     producer = Column(String(255))
     status = Column(Enum(ProjectStatus), default=ProjectStatus.PRE_PRODUCTION)
+
+    # New time-related fields
+    shoot_date = Column(Date)
+    call_time = Column(Time)
+    start_time = Column(Time)
+    end_time = Column(Time)
+    location = Column(Text)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

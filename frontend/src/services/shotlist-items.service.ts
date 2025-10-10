@@ -22,8 +22,13 @@ export const shotlistItemsService = {
   },
 
   async reorderItems(shotlistId: string, itemIds: string[]): Promise<ShotlistItem[]> {
+    const items = itemIds.map((item_id, index) => ({
+      item_id,
+      new_index: index
+    }));
+
     const response = await api.put(`/api/shotlists/${shotlistId}/items/reorder`, {
-      item_ids: itemIds
+      items
     });
     return response.data;
   },

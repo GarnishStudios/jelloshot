@@ -28,13 +28,20 @@ export const ProjectForm: React.FC = () => {
     setLoading(true);
 
     try {
+      // Check authentication
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setError('Please log in first to create a project.');
+        setLoading(false);
+        return;
+      }
       const dataToSend = {
         ...formData,
         shoot_date: formData.shoot_date || null,
       };
 
       const response = await api.post('/api/projects', dataToSend);
-      navigate(`/projects/${response.data.id}`);
+      navigate(`/projects/${response.data.id}/shotlist`);
     } catch (error: any) {
       setError(error.response?.data?.detail || 'Failed to create project');
       setLoading(false);

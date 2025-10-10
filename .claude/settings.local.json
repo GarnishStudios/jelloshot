@@ -18,7 +18,13 @@
       "Bash(docker logs:*)",
       "Bash(docker restart:*)",
       "Bash(docker ps:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(alembic upgrade:*)"
     ],
     "deny": [],
     "ask": []

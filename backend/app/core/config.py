@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Parse CORS_ORIGINS as a comma-separated string from environment
-    CORS_ORIGINS: Union[str, List[str]] = "http://localhost:5173,http://localhost:3000"
+    CORS_ORIGINS: Union[str, List[str]] = "http://localhost:5173,http://localhost:5174,http://localhost:3000"
 
     UPLOAD_DIR: str = "uploads"
     MAX_FILE_SIZE: int = 5 * 1024 * 1024  # 5MB
@@ -29,8 +29,9 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in v.split(",")]
         return v
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "case_sensitive": True
+    }
 
 settings = Settings()

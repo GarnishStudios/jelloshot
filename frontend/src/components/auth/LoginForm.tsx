@@ -12,7 +12,7 @@ export const LoginForm: React.FC = () => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate('/dashboard');
+      navigate('/projects');
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -69,7 +69,7 @@ export const LoginForm: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full justify-center"
+              className="w-full justify-center"
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
