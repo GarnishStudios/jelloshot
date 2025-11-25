@@ -17,6 +17,7 @@ class ProjectBase(BaseModel):
     director: Optional[str] = None
     producer: Optional[str] = None
     status: ProjectStatus = ProjectStatus.PRE_PRODUCTION
+    client_id: Optional[UUID] = None
 
     # New time-related fields
     shoot_date: Optional[date] = None
@@ -35,6 +36,7 @@ class ProjectUpdate(BaseModel):
     director: Optional[str] = None
     producer: Optional[str] = None
     status: Optional[ProjectStatus] = None
+    client_id: Optional[UUID] = None
 
     # New time-related fields
     shoot_date: Optional[date] = None
@@ -46,6 +48,7 @@ class ProjectUpdate(BaseModel):
 class ProjectInDB(ProjectBase):
     id: UUID
     user_id: UUID
+    client_id: Optional[UUID] = None
     created_at: datetime
     updated_at: datetime
 

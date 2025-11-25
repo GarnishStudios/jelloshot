@@ -114,7 +114,7 @@ export const ClientSection: React.FC<ClientSectionProps> = ({
                 <div></div>
               </div>
 
-              {clientMembers.map((member, index) => (
+              {clientMembers.map((member) => (
                 <div
                   key={member.id}
                   className="bg-white/5 border border-white/10 rounded-lg p-4 grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_1fr_1fr_auto] gap-4 items-center min-w-0"

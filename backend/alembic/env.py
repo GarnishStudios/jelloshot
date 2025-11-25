@@ -21,7 +21,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from app.db.database import Base
-from app.models import user, project, shotlist, shotlist_item  # Import all models
+from app.models import user, project, shotlist, shotlist_item, client  # Import all models
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

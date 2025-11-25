@@ -8,9 +8,11 @@ export interface User {
   updated_at: string;
 }
 
+// Project must be defined before Client since Client references it
 export interface Project {
   id: string;
   user_id: string;
+  client_id?: string;
   name: string;
   description?: string;
   production_company?: string;
@@ -24,6 +26,16 @@ export interface Project {
   status?: 'pre_production' | 'production' | 'post_production' | 'completed';
   created_at: string;
   updated_at: string;
+}
+
+export interface Client {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+  projects?: Project[];
 }
 
 export interface Shotlist {

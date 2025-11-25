@@ -6,7 +6,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password?: string) => Promise<void>;
   register: (username: string, email: string, password: string, fullName: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
@@ -18,15 +18,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   error: null,
 
-  login: async (username: string, password: string) => {
+  login: async (username: string, password?: string) => {
     set({ isLoading: true, error: null });
     try {
       await authService.login({ username, password });
       const user = await authService.getCurrentUser();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || error.message || 'Login failed';
+      console.error('Login error details:', {
+        message: errorMessage,
+        status: error.response?.status,
+        data: error.response?.data,
+        error
+      });
       set({
-        error: error.response?.data?.detail || 'Login failed',
+        error: errorMessage,
         isLoading: false
       });
       throw error;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Clock, Camera, Users, MessageSquare, Bell, FileText, Wine } from 'lucide-react';
+import { ArrowLeft, Plus, Clock, Camera, Users, MessageSquare, Bell, FileText } from 'lucide-react';
 import {
   DndContext,
   closestCenter,

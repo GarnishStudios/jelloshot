@@ -19,3 +19,4 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan")
+    clients = relationship("Client", back_populates="owner", cascade="all, delete-orphan")

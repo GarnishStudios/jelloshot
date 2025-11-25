@@ -2,7 +2,7 @@ import api from './api';
 
 export interface LoginData {
   username: string;
-  password: string;
+  password?: string;
 }
 
 export interface RegisterData {
@@ -21,19 +21,35 @@ export interface User {
 
 export const authService = {
   async login(data: LoginData) {
-    const params = new URLSearchParams();
-    params.append('username', data.username);
-    params.append('password', data.password);
+    try {
+      // Use plain object format - password is optional
+      // Send a placeholder password if none provided (backend accepts any password)
+      const password = data.password || 'any';
+      const formData = `username=${encodeURIComponent(data.username)}&password=${encodeURIComponent(password)}`;
 
-    const response = await api.post('/api/auth/login', params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
+      console.log('Attempting login for username:', data.username);
+      
+      const response = await api.post('/api/auth/login', formData, {
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
 
-    const { access_token, refresh_token } = response.data;
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('refresh_token', refresh_token);
+      const { access_token, refresh_token } = response.data;
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
 
-    return response.data;
+      console.log('Login successful');
+      return response.data;
+    } catch (error: any) {
+      console.error('Auth service login error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
+      throw error;
+    }
   },
 
   async register(data: RegisterData) {

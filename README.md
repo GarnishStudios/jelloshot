@@ -2,7 +2,8 @@
 
 ## 🎬 Project Overview
 
-Call Sheet is a web application designed to streamline production workflows by replacing manual, error-prone spreadsheet-based call sheet creation with an intuitive, efficient digital solution. The platform enables production teams to create, manage, and share call sheets instantly with flexible adjustments.
+Jello Shot AI
+ is a web application designed to streamline production workflows by replacing manual, error-prone spreadsheet-based call sheet creation with an intuitive, efficient digital solution. The platform enables production teams to create, manage, and share call sheets instantly with flexible adjustments.
 
 ## 🎯 Problem Statement
 
@@ -406,3 +407,5 @@ For questions or support, please contact: [email@example.com]
 ---
 
 *Last Updated: December 2024*
+ON VERSION 1 
+

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 from app.db.database import get_db
 from app.schemas.project import Project, ProjectCreate, ProjectUpdate, ProjectWithShotlists
@@ -14,10 +14,19 @@ router = APIRouter()
 def read_projects(
     skip: int = 0,
     limit: int = 100,
+    client_id: Optional[UUID] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user)
 ):
-    projects = project_service.get_user_projects(db, user_id=current_user.id, skip=skip, limit=limit)
+    if client_id:
+        projects = project_service.get_client_projects(db, client_id=client_id, skip=skip, limit=limit)
+        # Filter to ensure user owns the client
+        from app.services import clients as client_service
+        client = client_service.get_client(db, client_id)
+        if not client or client.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Not authorized to access this client's projects")
+    else:
+        projects = project_service.get_user_projects(db, user_id=current_user.id, skip=skip, limit=limit)
     return projects
 
 @router.post("/", response_model=Project)

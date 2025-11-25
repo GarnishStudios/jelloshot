@@ -18,6 +18,7 @@ class Project(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=True)
     name = Column(String(255), nullable=False)
     description = Column(Text)
     production_company = Column(String(255))
@@ -36,4 +37,5 @@ class Project(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner = relationship("User", back_populates="projects")
+    client = relationship("Client", back_populates="projects")
     shotlists = relationship("Shotlist", back_populates="project", cascade="all, delete-orphan")

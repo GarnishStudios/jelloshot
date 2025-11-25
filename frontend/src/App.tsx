@@ -8,6 +8,7 @@ import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { ProjectForm } from './pages/ProjectForm';
 import { ShotlistDetail } from './pages/ShotlistDetail';
+import { ClientDetail } from './pages/ClientDetail';
 import { Debug } from './pages/Debug';
 import { QuickLogin } from './pages/QuickLogin';
 import { PrivateRoute } from './components/PrivateRoute';
@@ -40,6 +41,7 @@ function App() {
           >
             <Route index element={<Navigate to="/projects" replace />} />
             <Route path="projects" element={<Dashboard />} />
+            <Route path="clients/:clientId" element={<ClientDetail />} />
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/:id/shotlist" element={<ShotlistDetail />} />
             <Route path="projects/:id/edit" element={<ProjectForm />} />

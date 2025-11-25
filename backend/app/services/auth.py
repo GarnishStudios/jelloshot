@@ -49,8 +49,9 @@ def authenticate_user(db: Session, username: str, password: str):
         user = get_user_by_email(db, username)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
-        return False
+    # DEVELOPMENT MODE: Password verification disabled - accept any password or no password
+    # if not verify_password(password, user.hashed_password):
+    #     return False
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
