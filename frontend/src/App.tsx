@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
+import { healthService } from './services/health.service';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { Layout } from './components/layout/Layout';
@@ -17,8 +18,21 @@ const queryClient = new QueryClient();
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'healthy' | 'unhealthy'>('checking');
 
   useEffect(() => {
+    // Check backend health on app startup
+    const checkBackendHealth = async () => {
+      const health = await healthService.checkHealth(5000);
+      setBackendStatus(health.status);
+      
+      if (health.status === 'unhealthy') {
+        console.warn('Backend health check failed:', health.message);
+        // Optionally show a notification to the user
+      }
+    };
+
+    checkBackendHealth();
     checkAuth();
   }, [checkAuth]);
 

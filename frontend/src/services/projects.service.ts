@@ -21,7 +21,7 @@ export const projectsService = {
     const response = await api.post('/api/projects', data);
     return response.data;
   },
-  
+
   async createProject(data: Partial<Project>): Promise<Project> {
     const response = await api.post('/api/projects', data);
     return response.data;

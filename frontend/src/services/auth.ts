@@ -28,19 +28,19 @@ export const authService = {
       const formData = `username=${encodeURIComponent(data.username)}&password=${encodeURIComponent(password)}`;
 
       console.log('Attempting login for username:', data.username);
-      
+
       const response = await api.post('/api/auth/login', formData, {
         headers: { 
           'Content-Type': 'application/x-www-form-urlencoded'
         }
-      });
+    });
 
-      const { access_token, refresh_token } = response.data;
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
+    const { access_token, refresh_token } = response.data;
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('refresh_token', refresh_token);
 
       console.log('Login successful');
-      return response.data;
+    return response.data;
     } catch (error: any) {
       console.error('Auth service login error:', {
         message: error.message,
