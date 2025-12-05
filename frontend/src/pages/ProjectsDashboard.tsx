@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { clientsService } from '../services/clients.service';
 import type { Client } from '../types';
 import { Button } from '@/components/ui/button';
 
-export const Dashboard: React.FC = () => {
+export const ProjectsDashboard: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
