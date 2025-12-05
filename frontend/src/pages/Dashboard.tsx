@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { clientsService } from '../services/clients.service';
 import type { Client } from '../types';
 import { Button } from '@/components/ui/button';
+import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
 
 export const Dashboard: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
@@ -10,6 +11,8 @@ export const Dashboard: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newClientName, setNewClientName] = useState('');
   const [newClientDescription, setNewClientDescription] = useState('');
+  const [sortOption, setSortOption] = useState<SortOption>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +61,31 @@ export const Dashboard: React.FC = () => {
       console.error('Failed to create client:', error);
     }
   };
+
+  // Sort clients based on selected option and order
+  const sortedClients = useMemo(() => {
+    const sorted = [...clients];
+    
+    if (sortOption === 'date') {
+      sorted.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+    } else if (sortOption === 'name') {
+      sorted.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        if (sortOrder === 'asc') {
+          return nameA.localeCompare(nameB);
+        } else {
+          return nameB.localeCompare(nameA);
+        }
+      });
+    }
+    
+    return sorted;
+  }, [clients, sortOption, sortOrder]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 scrollbar-styled relative overflow-hidden">
@@ -142,8 +170,17 @@ export const Dashboard: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {clients.map((client) => (
+              <>
+                <div className="flex items-center justify-end">
+                  <SortSelector
+                    value={sortOption}
+                    order={sortOrder}
+                    onSortChange={setSortOption}
+                    onOrderChange={setSortOrder}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {sortedClients.map((client) => (
                   <div
                     key={client.id}
                     onClick={() => navigate(`/clients/${client.id}`)}
@@ -173,8 +210,9 @@ export const Dashboard: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>

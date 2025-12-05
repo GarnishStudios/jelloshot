@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { clientsService } from '../services/clients.service';
 import type { Client } from '../types';
 import { projectsService } from '../services/projects.service';
 import type { Project } from '../types';
 import { Button } from '@/components/ui/button';
+import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
 
 export const ClientDetail: React.FC = () => {
   const { clientId } = useParams<{ clientId: string }>();
@@ -14,6 +15,8 @@ export const ClientDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [sortOption, setSortOption] = useState<SortOption>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   useEffect(() => {
     if (!clientId) return;
@@ -65,6 +68,31 @@ export const ClientDetail: React.FC = () => {
     setShowCreateForm(true);
     // Focus will be on the input field when form appears
   };
+
+  // Sort projects based on selected option and order
+  const sortedProjects = useMemo(() => {
+    const sorted = [...projects];
+    
+    if (sortOption === 'date') {
+      sorted.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+    } else if (sortOption === 'name') {
+      sorted.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        if (sortOrder === 'asc') {
+          return nameA.localeCompare(nameB);
+        } else {
+          return nameB.localeCompare(nameA);
+        }
+      });
+    }
+    
+    return sorted;
+  }, [projects, sortOption, sortOrder]);
 
   if (loading) {
     return (
@@ -169,8 +197,17 @@ export const ClientDetail: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {projects.map((project) => (
+              <>
+                <div className="flex items-center justify-end">
+                  <SortSelector
+                    value={sortOption}
+                    order={sortOrder}
+                    onSortChange={setSortOption}
+                    onOrderChange={setSortOrder}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {sortedProjects.map((project) => (
                   <div
                     key={project.id}
                     onClick={() => navigate(`/projects/${project.id}/shotlist`)}
@@ -198,8 +235,9 @@ export const ClientDetail: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
