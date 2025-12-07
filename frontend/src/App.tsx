@@ -7,7 +7,7 @@ import { healthService } from './services/health.service';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { Layout } from './components/layout/Layout';
-import { Dashboard } from './pages/Dashboard';
+import { ProjectsDashboard } from './pages/ProjectsDashboard';
 import { ProjectForm } from './pages/ProjectForm';
 import { ShotlistDetail } from './pages/ShotlistDetail';
 import { ClientDetail } from './pages/ClientDetail';
@@ -37,7 +37,7 @@ function App() {
     const checkBackendHealth = async () => {
       const health = await healthService.checkHealth(5000);
       setBackendStatus(health.status);
-      
+
       if (health.status === 'unhealthy') {
         console.warn('Backend health check failed:', health.message);
         // Optionally show a notification to the user
@@ -66,7 +66,7 @@ function App() {
             }
           >
             <Route index element={<Navigate to="/projects" replace />} />
-            <Route path="projects" element={<Dashboard />} />
+            <Route path="projects" element={<ProjectsDashboard />} />
             <Route path="clients/:clientId" element={<ClientDetail />} />
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/:id/shotlist" element={<ShotlistDetail />} />
