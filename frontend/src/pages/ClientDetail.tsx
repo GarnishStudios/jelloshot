@@ -20,7 +20,7 @@ export const ClientDetail: React.FC = () => {
 
   useEffect(() => {
     if (!clientId) return;
-    
+
     const fetchData = async () => {
       try {
         const [clientData, projectsData] = await Promise.all([
@@ -34,7 +34,7 @@ export const ClientDetail: React.FC = () => {
       } catch (error: any) {
         console.error('Failed to fetch client data:', error);
         if (error.response?.status === 404) {
-          navigate('/projects');
+          navigate('/clients');
         }
       } finally {
         setLoading(false);
@@ -72,7 +72,7 @@ export const ClientDetail: React.FC = () => {
   // Sort projects based on selected option and order
   const sortedProjects = useMemo(() => {
     const sorted = [...projects];
-    
+
     if (sortOption === 'date') {
       sorted.sort((a, b) => {
         const dateA = new Date(a.created_at).getTime();
@@ -90,7 +90,7 @@ export const ClientDetail: React.FC = () => {
         }
       });
     }
-    
+
     return sorted;
   }, [projects, sortOption, sortOrder]);
 
@@ -127,7 +127,7 @@ export const ClientDetail: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <Button
                     variant="ghost"
-                    onClick={() => navigate('/projects')}
+                    onClick={() => navigate('/clients')}
                     className="text-slate-300 hover:text-white"
                   >
                     ← Back
@@ -208,33 +208,33 @@ export const ClientDetail: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {sortedProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => navigate(`/projects/${project.id}/shotlist`)}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20 flex flex-col h-full hover:bg-white/10 transition-all duration-300 group cursor-pointer"
-                  >
-                    <div className="flex-1 space-y-3">
-                      <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-                        {project.name}
-                      </h3>
-                      {project.description && (
-                        <p className="text-slate-300">{project.description}</p>
-                      )}
-                      {project.shoot_date && (
-                        <p className="text-sm text-white font-medium">
-                          Shoot Date: {new Date(project.shoot_date).toLocaleDateString()}
+                    <div
+                      key={project.id}
+                      onClick={() => navigate(`/projects/${project.id}/shotlist`)}
+                      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20 flex flex-col h-full hover:bg-white/10 transition-all duration-300 group cursor-pointer"
+                    >
+                      <div className="flex-1 space-y-3">
+                        <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                          {project.name}
+                        </h3>
+                        {project.description && (
+                          <p className="text-slate-300">{project.description}</p>
+                        )}
+                        {project.shoot_date && (
+                          <p className="text-sm text-white font-medium">
+                            Shoot Date: {new Date(project.shoot_date).toLocaleDateString()}
+                          </p>
+                        )}
+                        <p className="text-xs text-slate-400">
+                          Created: {new Date(project.created_at).toLocaleDateString()}
                         </p>
-                      )}
-                      <p className="text-xs text-slate-400">
-                        Created: {new Date(project.created_at).toLocaleDateString()}
-                      </p>
+                      </div>
+                      <div className="mt-6 pt-4 border-t border-white/20">
+                        <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white group-hover:bg-white/30 transition-all duration-300">
+                          View Project →
+                        </Button>
+                      </div>
                     </div>
-                    <div className="mt-6 pt-4 border-t border-white/20">
-                      <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white group-hover:bg-white/30 transition-all duration-300">
-                        View Project →
-                      </Button>
-                    </div>
-                  </div>
                   ))}
                 </div>
               </>

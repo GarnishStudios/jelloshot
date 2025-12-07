@@ -7,8 +7,7 @@ import { healthService } from './services/health.service';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { Layout } from './components/layout/Layout';
-import { ProjectsDashboard } from './pages/ProjectsDashboard';
-import { ProjectForm } from './pages/ProjectForm';
+import { Clients } from './pages/Clients';
 import { ShotlistDetail } from './pages/ShotlistDetail';
 import { ClientDetail } from './pages/ClientDetail';
 import { Debug } from './pages/Debug';
@@ -65,12 +64,10 @@ function App() {
               </PrivateRoute>
             }
           >
-            <Route index element={<Navigate to="/projects" replace />} />
-            <Route path="projects" element={<ProjectsDashboard />} />
+            <Route index element={<Navigate to="/clients" replace />} />
             <Route path="clients/:clientId" element={<ClientDetail />} />
-            <Route path="projects/new" element={<ProjectForm />} />
+            <Route path="clients" element={<Clients />} />
             <Route path="projects/:id/shotlist" element={<ShotlistDetail />} />
-            <Route path="projects/:id/edit" element={<ProjectForm />} />
           </Route>
         </Routes>
       </Router>

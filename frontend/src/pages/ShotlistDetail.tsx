@@ -426,9 +426,9 @@ export const ShotlistDetail: React.FC = () => {
       <div className="min-h-screen bg-background text-foreground">
         <div className="container mx-auto p-8">
           <Button variant="ghost" asChild className="mb-4">
-            <Link to="/projects">
+            <Link to="/clients">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Projects
+              Back to clients
             </Link>
           </Button>
           <Card>
@@ -458,275 +458,275 @@ export const ShotlistDetail: React.FC = () => {
         <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-indigo-500/5 via-cyan-500/5 to-transparent rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
       </div>
       <div className="relative z-10">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20">
-          <div className="flex items-center justify-between">
-            <div className="space-y-3">
-              <Button variant="ghost" size="sm" asChild className="text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                <Link to="/projects">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Projects
-                </Link>
-              </Button>
-              <div className="space-y-2">
-                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-                  {project?.name || 'Project'}
-                </h1>
-                <p className="text-slate-400 font-medium">Shot List Management</p>
-              </div>
-              {shotlist && (
-                <div className="flex items-center gap-4 pt-2">
-                  {shotlist.call_time && (
-                    <Badge className="gap-1 bg-blue-500/20 text-blue-300 border-blue-400/30 hover:bg-blue-500/30 transition-colors">
-                      <Clock className="h-3 w-3" />
-                      Call: {formatTimeTo12Hour(shotlist.call_time)}
-                    </Badge>
-                  )}
-                  {shotlist.wrap_time && (
-                    <Badge className="gap-1 bg-purple-500/20 text-purple-300 border-purple-400/30 hover:bg-purple-500/30 transition-colors">
-                      <Camera className="h-3 w-3" />
-                      Wrap: {formatTimeTo12Hour(shotlist.wrap_time)}
-                    </Badge>
-                  )}
-                  <Badge className="gap-1 bg-emerald-500/20 text-emerald-300 border-emerald-400/30 hover:bg-emerald-500/30 transition-colors">
-                    <FileText className="h-3 w-3" />
-                    {shotlistItems.length} shots • {formatDuration(totalDuration)}
-                  </Badge>
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20">
+            <div className="flex items-center justify-between">
+              <div className="space-y-3">
+                <Button variant="ghost" size="sm" asChild className="text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                  <Link to="/clients">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Clients
+                  </Link>
+                </Button>
+                <div className="space-y-2">
+                  <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                    {project?.name || 'Project'}
+                  </h1>
+                  <p className="text-slate-400 font-medium">Shot List Management</p>
                 </div>
-              )}
+                {shotlist && (
+                  <div className="flex items-center gap-4 pt-2">
+                    {shotlist.call_time && (
+                      <Badge className="gap-1 bg-blue-500/20 text-blue-300 border-blue-400/30 hover:bg-blue-500/30 transition-colors">
+                        <Clock className="h-3 w-3" />
+                        Call: {formatTimeTo12Hour(shotlist.call_time)}
+                      </Badge>
+                    )}
+                    {shotlist.wrap_time && (
+                      <Badge className="gap-1 bg-purple-500/20 text-purple-300 border-purple-400/30 hover:bg-purple-500/30 transition-colors">
+                        <Camera className="h-3 w-3" />
+                        Wrap: {formatTimeTo12Hour(shotlist.wrap_time)}
+                      </Badge>
+                    )}
+                    <Badge className="gap-1 bg-emerald-500/20 text-emerald-300 border-emerald-400/30 hover:bg-emerald-500/30 transition-colors">
+                      <FileText className="h-3 w-3" />
+                      {shotlistItems.length} shots • {formatDuration(totalDuration)}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleAddItem} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Shot
+              </Button>
+              <Button onClick={handleAddLunchBreak} variant="secondary" className="gap-2">
+                🍽️ Lunch Break
+              </Button>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddItem} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Shot
-            </Button>
-            <Button onClick={handleAddLunchBreak} variant="secondary" className="gap-2">
-              🍽️ Lunch Break
-            </Button>
-          </div>
-        </div>
 
-        {/* Project Details Section */}
-        {project && (
-          <ProjectDetailsSection
-            project={project}
-            onUpdate={handleProjectUpdate}
-            onTimeChange={handleTimeChange}
+          {/* Project Details Section */}
+          {project && (
+            <ProjectDetailsSection
+              project={project}
+              onUpdate={handleProjectUpdate}
+              onTimeChange={handleTimeChange}
+            />
+          )}
+
+          {/* Crew Section */}
+          <CrewSection
+            crewMembers={crewMembers}
+            onAddMember={handleAddCrewMember}
+            onUpdateMember={handleUpdateCrewMember}
+            onDeleteMember={handleDeleteCrewMember}
           />
-        )}
 
-        {/* Crew Section */}
-        <CrewSection
-          crewMembers={crewMembers}
-          onAddMember={handleAddCrewMember}
-          onUpdateMember={handleUpdateCrewMember}
-          onDeleteMember={handleDeleteCrewMember}
-        />
+          {/* Client Section */}
+          <ClientSection
+            clientMembers={clientMembers}
+            onAddMember={handleAddClientMember}
+            onUpdateMember={handleUpdateClientMember}
+            onDeleteMember={handleDeleteClientMember}
+          />
 
-        {/* Client Section */}
-        <ClientSection
-          clientMembers={clientMembers}
-          onAddMember={handleAddClientMember}
-          onUpdateMember={handleUpdateClientMember}
-          onDeleteMember={handleDeleteClientMember}
-        />
-
-        {/* Main Layout - Split into left shot list and right sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Shot List Section - Left 2/3 */}
-          <div className="lg:col-span-2">
-            <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
-              {/* Header */}
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-xl text-slate-200 font-semibold">Shot List</CardTitle>
-                    <CardDescription className="text-slate-400">
-                      {shotlistItems.length} shots • {project?.start_time && project?.end_time ?
-                        `${formatTimeTo12Hour(project.start_time)} - ${formatTimeTo12Hour(project.end_time)}` :
-                        formatDuration(totalDuration)}
-                    </CardDescription>
+          {/* Main Layout - Split into left shot list and right sidebar */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Shot List Section - Left 2/3 */}
+            <div className="lg:col-span-2">
+              <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
+                {/* Header */}
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl text-slate-200 font-semibold">Shot List</CardTitle>
+                      <CardDescription className="text-slate-400">
+                        {shotlistItems.length} shots • {project?.start_time && project?.end_time ?
+                          `${formatTimeTo12Hour(project.start_time)} - ${formatTimeTo12Hour(project.end_time)}` :
+                          formatDuration(totalDuration)}
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={handleAddItem} className="gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                        <Plus className="h-3 w-3" />
+                        Add Shot
+                      </Button>
+                      <Button size="sm" onClick={handleAddLunchBreak} className="gap-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                        🍽️ Lunch
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={handleAddItem} className="gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
-                      <Plus className="h-3 w-3" />
-                      Add Shot
-                    </Button>
-                    <Button size="sm" onClick={handleAddLunchBreak} className="gap-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
-                      🍽️ Lunch
-                    </Button>
+                </CardHeader>
+
+                {/* Progress Bar */}
+                <div className="px-6 pb-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>{calculatedItems.filter(item => item.is_completed).length} completed</span>
+                      <span>
+                        {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length
+                          ? "🍸 Martini Shot! 🎬"
+                          : "Shot Progress"
+                        }
+                      </span>
+                      <span>{calculatedItems.length} total</span>
+                    </div>
+                    <div className="w-full h-2 bg-white/10 rounded-full relative">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 rounded-full transition-all duration-500 ease-out"
+                        style={{
+                          width: `${calculatedItems.length > 0 ? (calculatedItems.filter(item => item.is_completed).length / calculatedItems.length) * 100 : 0}%`
+                        }}
+                      >
+                        {/* Effect at the end of progress */}
+                        {calculatedItems.filter(item => item.is_completed).length > 0 && (
+                          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2">
+                            {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length ? (
+                              // Martini glass for 100% completion (Martini Shot!)
+                              <div className="relative">
+                                <div className="text-xl animate-bounce" style={{ animationDuration: '1s' }}>
+                                  🍸
+                                </div>
+                                {/* Sparkle effect around the martini */}
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 text-yellow-400 text-xs animate-ping">
+                                  ✨
+                                </div>
+                              </div>
+                            ) : (
+                              // Regular sparkle for partial completion
+                              <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50">
+                                <div className="absolute inset-0 bg-emerald-300 rounded-full animate-ping"></div>
+                                <div className="absolute inset-1 bg-white rounded-full opacity-60"></div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-              </CardHeader>
 
-              {/* Progress Bar */}
-              <div className="px-6 pb-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>{calculatedItems.filter(item => item.is_completed).length} completed</span>
-                    <span>
-                      {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length
-                        ? "🍸 Martini Shot! 🎬"
-                        : "Shot Progress"
-                      }
-                    </span>
-                    <span>{calculatedItems.length} total</span>
-                  </div>
-                  <div className="w-full h-2 bg-white/10 rounded-full relative">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 rounded-full transition-all duration-500 ease-out"
-                      style={{
-                        width: `${calculatedItems.length > 0 ? (calculatedItems.filter(item => item.is_completed).length / calculatedItems.length) * 100 : 0}%`
-                      }}
-                    >
-                      {/* Effect at the end of progress */}
-                      {calculatedItems.filter(item => item.is_completed).length > 0 && (
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2">
-                          {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length ? (
-                            // Martini glass for 100% completion (Martini Shot!)
-                            <div className="relative">
-                              <div className="text-xl animate-bounce" style={{ animationDuration: '1s' }}>
-                                🍸
-                              </div>
-                              {/* Sparkle effect around the martini */}
-                              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 text-yellow-400 text-xs animate-ping">
-                                ✨
-                              </div>
-                            </div>
-                          ) : (
-                            // Regular sparkle for partial completion
-                            <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50">
-                              <div className="absolute inset-0 bg-emerald-300 rounded-full animate-ping"></div>
-                              <div className="absolute inset-1 bg-white rounded-full opacity-60"></div>
-                            </div>
-                          )}
+                <CardContent className="space-y-4">
+                  {calculatedItems.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="space-y-4">
+                        <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                          <Camera className="h-6 w-6 text-muted-foreground" />
                         </div>
-                      )}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <CardContent className="space-y-4">
-                {calculatedItems.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="space-y-4">
-                      <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                        <Camera className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">No shots added yet</h3>
-                        <p className="text-sm text-muted-foreground">Create your first shot to get started</p>
-                      </div>
-                      <div className="flex gap-2 justify-center">
-                        <Button onClick={handleAddItem} className="gap-2">
-                          <Plus className="h-4 w-4" />
-                          Add Your First Shot
-                        </Button>
-                        <Button onClick={handleAddLunchBreak} variant="outline" className="gap-2">
-                          🍽️ Add Lunch Break
-                        </Button>
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-medium">No shots added yet</h3>
+                          <p className="text-sm text-muted-foreground">Create your first shot to get started</p>
+                        </div>
+                        <div className="flex gap-2 justify-center">
+                          <Button onClick={handleAddItem} className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            Add Your First Shot
+                          </Button>
+                          <Button onClick={handleAddLunchBreak} variant="outline" className="gap-2">
+                            🍽️ Add Lunch Break
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={calculatedItems.map(item => item.id)}
-                      strategy={verticalListSortingStrategy}
+                  ) : (
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
                     >
+                      <SortableContext
+                        items={calculatedItems.map(item => item.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {calculatedItems.map((item, index) => (
+                            <ShotlistItemCard
+                              key={item.id}
+                              item={item}
+                              onUpdate={handleUpdateItem}
+                              onDelete={handleDeleteItem}
+                              onDurationChange={handleDurationChange}
+                              onAddPropertyToAll={handleAddPropertyToAll}
+                              index={index + 1}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Sidebar - 1/3 */}
+            <div className="space-y-6">
+              {/* Shot Preview */}
+              <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-slate-200 font-semibold">Shot Preview</CardTitle>
+                  <CardDescription className="text-slate-400">All {calculatedItems.length} shots</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {calculatedItems.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-6">No shots to preview</p>
+                  ) : (
+                    <div className="max-h-96 overflow-y-auto px-6 pb-6">
                       <div className="space-y-3">
                         {calculatedItems.map((item, index) => (
-                          <ShotlistItemCard
-                            key={item.id}
-                            item={item}
-                            onUpdate={handleUpdateItem}
-                            onDelete={handleDeleteItem}
-                            onDurationChange={handleDurationChange}
-                            onAddPropertyToAll={handleAddPropertyToAll}
-                            index={index + 1}
-                          />
+                          <div key={item.id} className="flex items-center justify-between p-2 rounded-md hover:bg-white/5 transition-colors">
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium text-white">{item.shot_name}</p>
+                              <p className="text-xs text-slate-400">
+                                {item.start_time ? formatTimeTo12Hour(item.start_time) : '--:--'} • {item.shot_duration}min
+                              </p>
+                            </div>
+                            <Badge
+                              variant="secondary"
+                              className={cn(
+                                "w-2 h-2 p-0 rounded-full",
+                                index === 0 && "bg-emerald-500",
+                                index === 1 && "bg-blue-500",
+                                index === 2 && "bg-purple-500",
+                                index === 3 && "bg-orange-500",
+                                index >= 4 && "bg-slate-500"
+                              )}
+                            />
+                          </div>
                         ))}
                       </div>
-                    </SortableContext>
-                  </DndContext>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Sidebar - 1/3 */}
-          <div className="space-y-6">
-            {/* Shot Preview */}
-            <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-slate-200 font-semibold">Shot Preview</CardTitle>
-                <CardDescription className="text-slate-400">All {calculatedItems.length} shots</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                {calculatedItems.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-6">No shots to preview</p>
-                ) : (
-                  <div className="max-h-96 overflow-y-auto px-6 pb-6">
-                    <div className="space-y-3">
-                      {calculatedItems.map((item, index) => (
-                        <div key={item.id} className="flex items-center justify-between p-2 rounded-md hover:bg-white/5 transition-colors">
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium text-white">{item.shot_name}</p>
-                            <p className="text-xs text-slate-400">
-                              {item.start_time ? formatTimeTo12Hour(item.start_time) : '--:--'} • {item.shot_duration}min
-                            </p>
-                          </div>
-                          <Badge
-                            variant="secondary"
-                            className={cn(
-                              "w-2 h-2 p-0 rounded-full",
-                              index === 0 && "bg-emerald-500",
-                              index === 1 && "bg-blue-500",
-                              index === 2 && "bg-purple-500",
-                              index === 3 && "bg-orange-500",
-                              index >= 4 && "bg-slate-500"
-                            )}
-                          />
-                        </div>
-                      ))}
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  )}
+                </CardContent>
+              </Card>
 
-            {/* Crew & Communication */}
-            <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-slate-200 font-semibold">Team & Communication</CardTitle>
-                <CardDescription className="text-slate-400">Coordinate with your production team</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Send SMS Updates
-                </Button>
-                <Button className="btn-ghost w-full justify-start gap-2">
-                  <Users className="h-4 w-4" />
-                  Manage Crew
-                </Button>
-                <Button className="btn-ghost w-full justify-start gap-2">
-                  <Bell className="h-4 w-4" />
-                  Notifications
-                </Button>
-              </CardContent>
-            </Card>
+              {/* Crew & Communication */}
+              <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-slate-200 font-semibold">Team & Communication</CardTitle>
+                  <CardDescription className="text-slate-400">Coordinate with your production team</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button className="w-full justify-start gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Send SMS Updates
+                  </Button>
+                  <Button className="btn-ghost w-full justify-start gap-2">
+                    <Users className="h-4 w-4" />
+                    Manage Crew
+                  </Button>
+                  <Button className="btn-ghost w-full justify-start gap-2">
+                    <Bell className="h-4 w-4" />
+                    Notifications
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

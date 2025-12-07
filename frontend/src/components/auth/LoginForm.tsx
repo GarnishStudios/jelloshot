@@ -12,7 +12,7 @@ export const LoginForm: React.FC = () => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate('/projects');
+      navigate('/clients');
     } catch (error) {
       console.error('Login failed:', error);
     }

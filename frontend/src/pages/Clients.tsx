@@ -5,7 +5,7 @@ import type { Client } from '../types';
 import { Button } from '@/components/ui/button';
 import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
 
-export const ProjectsDashboard: React.FC = () => {
+export const Clients: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
