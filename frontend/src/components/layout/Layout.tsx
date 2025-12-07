@@ -20,7 +20,7 @@ export const Layout: React.FC = () => {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <Link to="/projects">
+                <Link to="/clients">
                   <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                     JelloShot
                   </h1>
@@ -28,10 +28,10 @@ export const Layout: React.FC = () => {
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
-                  to="/projects"
+                  to="/clients"
                   className="border-transparent text-muted-foreground hover:text-foreground hover:border-primary inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
                 >
-                  Projects
+                  Clients
                 </Link>
               </div>
             </div>

@@ -5,7 +5,7 @@ import type { Client } from '../types';
 import { Button } from '@/components/ui/button';
 import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
 
-export const Dashboard: React.FC = () => {
+export const Clients: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -65,7 +65,7 @@ export const Dashboard: React.FC = () => {
   // Sort clients based on selected option and order
   const sortedClients = useMemo(() => {
     const sorted = [...clients];
-    
+
     if (sortOption === 'date') {
       sorted.sort((a, b) => {
         const dateA = new Date(a.created_at).getTime();
@@ -83,7 +83,7 @@ export const Dashboard: React.FC = () => {
         }
       });
     }
-    
+
     return sorted;
   }, [clients, sortOption, sortOrder]);
 
@@ -181,35 +181,35 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {sortedClients.map((client) => (
-                  <div
-                    key={client.id}
-                    onClick={() => navigate(`/clients/${client.id}`)}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20 flex flex-col h-full hover:bg-white/10 transition-all duration-300 group cursor-pointer"
-                  >
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-xl">
-                          {client.name.charAt(0).toUpperCase()}
+                    <div
+                      key={client.id}
+                      onClick={() => navigate(`/clients/${client.id}`)}
+                      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20 flex flex-col h-full hover:bg-white/10 transition-all duration-300 group cursor-pointer"
+                    >
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-xl">
+                            {client.name.charAt(0).toUpperCase()}
+                          </div>
+                          <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                            {client.name}
+                          </h3>
                         </div>
-                        <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-                          {client.name}
-                        </h3>
-                      </div>
-                      {client.description && (
-                        <p className="text-slate-300 text-sm">
-                          {client.description}
+                        {client.description && (
+                          <p className="text-slate-300 text-sm">
+                            {client.description}
+                          </p>
+                        )}
+                        <p className="text-xs text-slate-400">
+                          Created: {new Date(client.created_at).toLocaleDateString()}
                         </p>
-                      )}
-                      <p className="text-xs text-slate-400">
-                        Created: {new Date(client.created_at).toLocaleDateString()}
-                      </p>
+                      </div>
+                      <div className="mt-6 pt-4 border-t border-white/20">
+                        <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white group-hover:bg-white/30 transition-all duration-300">
+                          View Projects →
+                        </Button>
+                      </div>
                     </div>
-                    <div className="mt-6 pt-4 border-t border-white/20">
-                      <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white group-hover:bg-white/30 transition-all duration-300">
-                        View Projects →
-                      </Button>
-                    </div>
-                  </div>
                   ))}
                 </div>
               </>
