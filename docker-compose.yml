@@ -14,6 +14,11 @@ services:
       - "5432:5432"
     networks:
       - callsheet_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -21,19 +26,27 @@ services:
       dockerfile: Dockerfile
     container_name: callsheet_backend
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/callsheet
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_HOSTNAME: ${DATABASE_HOSTNAME:-postgres}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_NAME: ${DATABASE_NAME:-callsheet}
       SECRET_KEY: ${SECRET_KEY:-your-secret-key-here-change-in-production}
-      CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://frontend:5173
+      SESSION_SECRET: ${SESSION_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://frontend:5173}
     volumes:
       - ./backend:/app
       - backend_uploads:/app/uploads
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - callsheet_network
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
 
   frontend:
     build:

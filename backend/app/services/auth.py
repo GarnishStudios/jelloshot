@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.security.base import SecurityBase
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -13,7 +14,26 @@ from app.models.user import User
 from app.schemas.user import UserCreate, TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+
+# Custom OAuth2 scheme that reads from cookies instead of Authorization header
+class CookieOAuth2PasswordBearer(SecurityBase):
+    def __init__(self, tokenUrl: str, cookie_name: str = "access_token"):
+        self.tokenUrl = tokenUrl
+        self.cookie_name = cookie_name
+        self.model = None
+        self.scheme_name = "OAuth2PasswordBearer"
+
+    async def __call__(self, request: Request) -> Optional[str]:
+        token = request.cookies.get(self.cookie_name)
+        if not token:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return token
+
+oauth2_scheme = CookieOAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

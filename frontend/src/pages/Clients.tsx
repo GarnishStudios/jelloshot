@@ -18,14 +18,6 @@ export const Clients: React.FC = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        // Check authentication
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-          console.error('No authentication token found');
-          window.location.href = '/login';
-          return;
-        }
-
         const data = await clientsService.getAll();
         setClients(data);
       } catch (error: any) {

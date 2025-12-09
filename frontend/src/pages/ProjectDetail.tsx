@@ -27,14 +27,6 @@ export const ProjectDetail: React.FC = () => {
 
   const fetchProjectDetails = async () => {
     try {
-      // Check authentication first
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        console.error('No authentication token found');
-        window.location.href = '/login';
-        return;
-      }
-
       const [projectData, shotlistsData] = await Promise.all([
         projectsService.getProject(id!),
         shotlistsService.getProjectShotlists(id!)
