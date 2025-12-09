@@ -4,8 +4,8 @@ from typing import List, Optional
 from uuid import UUID
 from app.db.database import get_db
 from app.schemas.project import Project, ProjectCreate, ProjectUpdate, ProjectWithShotlists
-from app.schemas.user import User
-from app.services import auth as auth_service
+from app.models.user import User
+from app.api.endpoints.auth import get_current_user
 from app.services import projects as project_service
 
 router = APIRouter()
@@ -16,7 +16,7 @@ def read_projects(
     limit: int = 100,
     client_id: Optional[UUID] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     if client_id:
         projects = project_service.get_client_projects(db, client_id=client_id, skip=skip, limit=limit)
@@ -33,7 +33,7 @@ def read_projects(
 def create_project(
     project: ProjectCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     return project_service.create_project(db=db, project=project, user_id=current_user.id)
 
@@ -41,7 +41,7 @@ def create_project(
 def read_project(
     project_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_project = project_service.get_project(db, project_id=project_id)
     if db_project is None:
@@ -55,7 +55,7 @@ def update_project(
     project_id: UUID,
     project: ProjectUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_project = project_service.get_project(db, project_id=project_id)
     if db_project is None:
@@ -68,7 +68,7 @@ def update_project(
 def delete_project(
     project_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_project = project_service.get_project(db, project_id=project_id)
     if db_project is None:

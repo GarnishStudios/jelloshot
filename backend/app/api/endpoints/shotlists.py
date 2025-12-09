@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 from app.db.database import get_db
 from app.schemas.shotlist import Shotlist, ShotlistCreate, ShotlistUpdate, ShotlistWithItems
-from app.schemas.user import User
-from app.services import auth as auth_service
+from app.models.user import User
+from app.api.endpoints.auth import get_current_user
 from app.services import shotlists as shotlist_service
 from app.services import projects as project_service
 
@@ -17,7 +17,7 @@ def read_shotlists(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_project = project_service.get_project(db, project_id=project_id)
     if db_project is None:
@@ -33,7 +33,7 @@ def create_shotlist(
     project_id: UUID,
     shotlist: ShotlistCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_project = project_service.get_project(db, project_id=project_id)
     if db_project is None:
@@ -47,7 +47,7 @@ def create_shotlist(
 def read_shotlist(
     shotlist_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:
@@ -64,7 +64,7 @@ def update_shotlist(
     shotlist_id: UUID,
     shotlist: ShotlistUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:
@@ -80,7 +80,7 @@ def update_shotlist(
 def delete_shotlist(
     shotlist_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:

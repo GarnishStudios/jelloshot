@@ -4,8 +4,8 @@ from typing import List
 from uuid import UUID
 from app.db.database import get_db
 from app.schemas.client import Client, ClientCreate, ClientUpdate, ClientWithProjects
-from app.schemas.user import User
-from app.services import auth as auth_service
+from app.models.user import User
+from app.api.endpoints.auth import get_current_user
 from app.services import clients as client_service
 
 router = APIRouter()
@@ -15,7 +15,7 @@ def read_clients(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     clients = client_service.get_user_clients(db, user_id=current_user.id, skip=skip, limit=limit)
     return clients
@@ -24,7 +24,7 @@ def read_clients(
 def create_client(
     client: ClientCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     return client_service.create_client(db=db, client=client, user_id=current_user.id)
 
@@ -32,7 +32,7 @@ def create_client(
 def read_client(
     client_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_client = client_service.get_client(db, client_id=client_id)
     if db_client is None:
@@ -46,7 +46,7 @@ def update_client(
     client_id: UUID,
     client: ClientUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_client = client_service.get_client(db, client_id=client_id)
     if db_client is None:
@@ -59,7 +59,7 @@ def update_client(
 def delete_client(
     client_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     db_client = client_service.get_client(db, client_id=client_id)
     if db_client is None:

@@ -1,42 +1,26 @@
-from pydantic import BaseModel, EmailStr, Field
+"""
+User schemas using FastAPI-Users base schemas.
+Extends base schemas with custom fields (username, full_name).
+"""
+from fastapi_users import schemas
+from pydantic import Field
 from typing import Optional
-from datetime import datetime
-from uuid import UUID
+import uuid
 
-class UserBase(BaseModel):
-    email: EmailStr
+
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    """Schema for reading user data (responses)"""
+    username: str
+    full_name: Optional[str] = None
+
+
+class UserCreate(schemas.BaseUserCreate):
+    """Schema for creating new users (registration)"""
     username: str = Field(..., min_length=3, max_length=100)
     full_name: Optional[str] = None
 
-class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
 
-class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
+class UserUpdate(schemas.BaseUserUpdate):
+    """Schema for updating user data"""
     username: Optional[str] = Field(None, min_length=3, max_length=100)
     full_name: Optional[str] = None
-    password: Optional[str] = Field(None, min_length=8)
-
-class UserInDB(UserBase):
-    id: UUID
-    is_active: bool
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
-
-class User(UserInDB):
-    pass
-
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    refresh_token: Optional[str] = None
-
-class TokenData(BaseModel):
-    user_id: Optional[UUID] = None

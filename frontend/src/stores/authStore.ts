@@ -6,76 +6,30 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (username: string, password?: string) => Promise<void>;
-  register: (username: string, email: string, password: string, fullName: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
   error: null,
 
-  login: async (username: string, password?: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      await authService.login({ username, password });
-      const user = await authService.getCurrentUser();
-      set({ user, isAuthenticated: true, isLoading: false });
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || error.message || 'Login failed';
-      console.error('Login error details:', {
-        message: errorMessage,
-        status: error.response?.status,
-        data: error.response?.data,
-        error
-      });
-      set({
-        error: errorMessage,
-        isLoading: false
-      });
-      throw error;
-    }
-  },
-
-  register: async (username: string, email: string, password: string, fullName: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      await authService.register({
-        username,
-        email,
-        password,
-        full_name: fullName,
-      });
-      set({ isLoading: false });
-    } catch (error: any) {
-      set({
-        error: error.response?.data?.detail || 'Registration failed',
-        isLoading: false
-      });
-      throw error;
-    }
-  },
-
-  logout: () => {
-    authService.logout();
-    set({ user: null, isAuthenticated: false });
+  logout: async () => {
+    await authService.logout();
+    set({ user: null, isAuthenticated: false, isLoading: false });
   },
 
   checkAuth: async () => {
-    if (!authService.isAuthenticated()) {
-      set({ isAuthenticated: false, user: null });
-      return;
-    }
-
+    // Always try to fetch the user to verify the session cookie
     try {
+      set({ isLoading: true });
       const user = await authService.getCurrentUser();
-      set({ user, isAuthenticated: true });
+      set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
-      authService.logout();
-      set({ isAuthenticated: false, user: null });
+      // If fetching user fails (e.g. 401), we are not authenticated
+      set({ isAuthenticated: false, user: null, isLoading: false });
     }
   },
 }));
