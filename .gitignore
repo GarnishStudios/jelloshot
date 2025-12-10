@@ -70,3 +70,7 @@ postgres_data/
 # Logs
 *.log
 logs/
+
+# Typegen
+backend/generated/openapi.json
+frontend/src/type-gen/openapi.json

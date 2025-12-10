@@ -1,14 +1,4 @@
 #!/bin/bash
 # hooks/pre-commit
-# Run Black in Docker before commit
-
-echo "Running Black formatter inside Docker..."
-docker-compose run --rm backend black .
-git add .
-
-echo "Running Prettier on frontend..."
-docker-compose run --rm frontend npx prettier --write .
-git add frontend
-
-# Continue with commit
+make -j4 all
 exit 0
