@@ -1,18 +1,22 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { clientsService } from '../services/clients.service';
-import type { Client } from '../types';
-import { Button } from '@/components/ui/button';
-import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { clientsService } from "../services/clients.service";
+import type { Client } from "../types";
+import { Button } from "@/components/ui/button";
+import {
+  SortSelector,
+  type SortOption,
+  type SortOrder,
+} from "@/components/ui/SortSelector";
 
 export const Clients: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newClientName, setNewClientName] = useState('');
-  const [newClientDescription, setNewClientDescription] = useState('');
-  const [sortOption, setSortOption] = useState<SortOption>('date');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [newClientName, setNewClientName] = useState("");
+  const [newClientDescription, setNewClientDescription] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("date");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,12 +25,12 @@ export const Clients: React.FC = () => {
         const data = await clientsService.getAll();
         setClients(data);
       } catch (error: any) {
-        console.error('Failed to fetch clients:', error);
+        console.error("Failed to fetch clients:", error);
         if (error.response?.status === 401) {
-          alert('Your session has expired. Please log in again.');
-          window.location.href = '/login';
+          alert("Your session has expired. Please log in again.");
+          window.location.href = "/login";
         } else {
-          console.error('Error fetching clients:', error);
+          console.error("Error fetching clients:", error);
         }
       } finally {
         setLoading(false);
@@ -46,11 +50,11 @@ export const Clients: React.FC = () => {
         description: newClientDescription || undefined,
       });
       setClients([...clients, newClient]);
-      setNewClientName('');
-      setNewClientDescription('');
+      setNewClientName("");
+      setNewClientDescription("");
       setShowCreateForm(false);
     } catch (error) {
-      console.error('Failed to create client:', error);
+      console.error("Failed to create client:", error);
     }
   };
 
@@ -58,17 +62,17 @@ export const Clients: React.FC = () => {
   const sortedClients = useMemo(() => {
     const sorted = [...clients];
 
-    if (sortOption === 'date') {
+    if (sortOption === "date") {
       sorted.sort((a, b) => {
         const dateA = new Date(a.created_at).getTime();
         const dateB = new Date(b.created_at).getTime();
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
       });
-    } else if (sortOption === 'name') {
+    } else if (sortOption === "name") {
       sorted.sort((a, b) => {
         const nameA = a.name.toLowerCase();
         const nameB = b.name.toLowerCase();
-        if (sortOrder === 'asc') {
+        if (sortOrder === "asc") {
           return nameA.localeCompare(nameB);
         } else {
           return nameB.localeCompare(nameA);
@@ -92,9 +96,12 @@ export const Clients: React.FC = () => {
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Clients</h1>
+                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                  Clients
+                </h1>
                 <p className="text-slate-300">
-                  Organize your projects by client. Click on a client to view their projects.
+                  Organize your projects by client. Click on a client to view
+                  their projects.
                 </p>
               </div>
               <div className="flex-shrink-0">
@@ -102,7 +109,7 @@ export const Clients: React.FC = () => {
                   onClick={() => setShowCreateForm(!showCreateForm)}
                   className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white border-0 shadow-lg"
                 >
-                  {showCreateForm ? 'Cancel' : 'New Client'}
+                  {showCreateForm ? "Cancel" : "New Client"}
                 </Button>
               </div>
             </div>
@@ -156,7 +163,9 @@ export const Clients: React.FC = () => {
               </div>
             ) : clients.length === 0 ? (
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-16 shadow-2xl shadow-black/20 text-center">
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">No clients yet</h3>
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                  No clients yet
+                </h3>
                 <p className="mt-2 text-slate-300">
                   Get started by creating your first client folder.
                 </p>
@@ -193,7 +202,8 @@ export const Clients: React.FC = () => {
                           </p>
                         )}
                         <p className="text-xs text-slate-400">
-                          Created: {new Date(client.created_at).toLocaleDateString()}
+                          Created:{" "}
+                          {new Date(client.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="mt-6 pt-4 border-t border-white/20">

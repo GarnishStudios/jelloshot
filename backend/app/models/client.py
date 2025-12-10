@@ -6,6 +6,7 @@ import uuid
 
 from app.db.database import Base
 
+
 class Client(Base):
     __tablename__ = "clients"
 
@@ -17,6 +18,6 @@ class Client(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner = relationship("User", back_populates="clients")
-    projects = relationship("Project", back_populates="client", cascade="all, delete-orphan")
-
-
+    projects = relationship(
+        "Project", back_populates="client", cascade="all, delete-orphan"
+    )

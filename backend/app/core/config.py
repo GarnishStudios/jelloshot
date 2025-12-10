@@ -4,6 +4,7 @@ from typing import List, Union
 import os
 import secrets as import_secrets
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Call Sheet"
     VERSION: str = "1.0.0"
@@ -23,21 +24,30 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     # If not set, generate a random secret (invalidates sessions on restart)
-    SESSION_SECRET: str = os.getenv("SESSION_SECRET", None) or import_secrets.token_urlsafe(32)
-    
+    SESSION_SECRET: str = os.getenv(
+        "SESSION_SECRET", None
+    ) or import_secrets.token_urlsafe(32)
+
     # OAuth Configuration
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Parse CORS_ORIGINS as a comma-separated string from environment
-    CORS_ORIGINS: Union[str, List[str]] = "http://localhost:5173,http://localhost:5174,http://localhost:3000"
+    CORS_ORIGINS: Union[str, List[str]] = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:3000"
+    )
 
     FRONTEND_URL: str = "http://localhost:5173"
 
     UPLOAD_DIR: str = "uploads"
     MAX_FILE_SIZE: int = 5 * 1024 * 1024  # 5MB
-    ALLOWED_IMAGE_TYPES: List[str] = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    ALLOWED_IMAGE_TYPES: List[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+    ]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -46,9 +56,7 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in v.split(",")]
         return v
 
-    model_config = {
-        "env_file": ".env",
-        "case_sensitive": True
-    }
+    model_config = {"env_file": ".env", "case_sensitive": True}
+
 
 settings = Settings()

@@ -1,14 +1,14 @@
-import api from './api';
-import type { Project } from '../types';
+import api from "./api";
+import type { Project } from "../types";
 
 export const projectsService = {
   async getAll(): Promise<Project[]> {
-    const response = await api.get('/api/projects');
+    const response = await api.get("/api/projects");
     return response.data;
   },
-  
+
   async getProjects(): Promise<Project[]> {
-    const response = await api.get('/api/projects');
+    const response = await api.get("/api/projects");
     return response.data;
   },
 
@@ -18,12 +18,12 @@ export const projectsService = {
   },
 
   async create(data: Partial<Project>): Promise<Project> {
-    const response = await api.post('/api/projects', data);
+    const response = await api.post("/api/projects", data);
     return response.data;
   },
 
   async createProject(data: Partial<Project>): Promise<Project> {
-    const response = await api.post('/api/projects', data);
+    const response = await api.post("/api/projects", data);
     return response.data;
   },
 
@@ -34,5 +34,5 @@ export const projectsService = {
 
   async deleteProject(id: string): Promise<void> {
     await api.delete(`/api/projects/${id}`);
-  }
+  },
 };

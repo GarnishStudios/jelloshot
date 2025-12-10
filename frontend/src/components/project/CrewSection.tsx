@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
-import type { CrewMember } from '../../types';
-import { InlineEdit } from '../ui/InlineEdit';
-import { TimeInput12Hour } from '../ui/TimeInput12Hour';
-import { Button } from '../ui/button';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import type { CrewMember } from "../../types";
+import { InlineEdit } from "../ui/InlineEdit";
+import { TimeInput12Hour } from "../ui/TimeInput12Hour";
+import { Button } from "../ui/button";
 
 interface CrewSectionProps {
   crewMembers: CrewMember[];
@@ -16,33 +16,41 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
   crewMembers,
   onAddMember,
   onUpdateMember,
-  onDeleteMember
+  onDeleteMember,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleAddMember = () => {
     onAddMember({
-      name: '',
-      role: '',
-      email: '',
-      call_time: '',
-      allergies: ''
+      name: "",
+      role: "",
+      email: "",
+      call_time: "",
+      allergies: "",
     });
   };
 
-  const handleFieldUpdate = (id: string, field: keyof CrewMember, value: string) => {
+  const handleFieldUpdate = (
+    id: string,
+    field: keyof CrewMember,
+    value: string,
+  ) => {
     onUpdateMember(id, { [field]: value });
   };
 
   return (
-    <div className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-8 transition-all duration-200 shadow-2xl shadow-black/20 ${
-      isExpanded ? 'p-8' : 'p-6'
-    }`}>
+    <div
+      className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-8 transition-all duration-200 shadow-2xl shadow-black/20 ${
+        isExpanded ? "p-8" : "p-6"
+      }`}
+    >
       <div className={isExpanded ? "mb-8" : "mb-0"}>
         <div className="flex items-center justify-between">
-          <h2 className={`text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent transition-all duration-200 ${
-            isExpanded ? 'mb-2' : 'mb-0'
-          }`}>
+          <h2
+            className={`text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent transition-all duration-200 ${
+              isExpanded ? "mb-2" : "mb-0"
+            }`}
+          >
             Crew Members
           </h2>
           <div className="flex items-center gap-3">
@@ -78,10 +86,18 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
         {/* Quick summary when collapsed */}
         {!isExpanded && (
           <div className="mt-3 text-sm text-slate-300">
-            <span className="font-medium">{crewMembers.length} crew member{crewMembers.length !== 1 ? 's' : ''}</span>
+            <span className="font-medium">
+              {crewMembers.length} crew member
+              {crewMembers.length !== 1 ? "s" : ""}
+            </span>
             {crewMembers.length > 0 && (
               <span className="ml-2">
-                ({crewMembers.slice(0, 3).map(member => member.name).join(', ')}{crewMembers.length > 3 ? '...' : ''})
+                (
+                {crewMembers
+                  .slice(0, 3)
+                  .map((member) => member.name)
+                  .join(", ")}
+                {crewMembers.length > 3 ? "..." : ""})
               </span>
             )}
           </div>
@@ -123,7 +139,9 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
                   <div className="min-w-0">
                     <InlineEdit
                       value={member.name}
-                      onSave={(value) => handleFieldUpdate(member.id, 'name', value)}
+                      onSave={(value) =>
+                        handleFieldUpdate(member.id, "name", value)
+                      }
                       placeholder="Name"
                       className="w-full"
                     />
@@ -132,8 +150,10 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
                   {/* Email */}
                   <div className="min-w-0">
                     <InlineEdit
-                      value={member.email || ''}
-                      onSave={(value) => handleFieldUpdate(member.id, 'email', value)}
+                      value={member.email || ""}
+                      onSave={(value) =>
+                        handleFieldUpdate(member.id, "email", value)
+                      }
                       placeholder="Email"
                       className="w-full"
                     />
@@ -143,7 +163,9 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
                   <div className="min-w-0">
                     <InlineEdit
                       value={member.role}
-                      onSave={(value) => handleFieldUpdate(member.id, 'role', value)}
+                      onSave={(value) =>
+                        handleFieldUpdate(member.id, "role", value)
+                      }
                       placeholder="Role"
                       className="w-full"
                     />
@@ -152,8 +174,10 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
                   {/* Call Time */}
                   <div className="min-w-0">
                     <TimeInput12Hour
-                      value={member.call_time || ''}
-                      onSave={(value) => handleFieldUpdate(member.id, 'call_time', value)}
+                      value={member.call_time || ""}
+                      onSave={(value) =>
+                        handleFieldUpdate(member.id, "call_time", value)
+                      }
                       placeholder="Call Time"
                       className="w-full"
                     />
@@ -162,8 +186,10 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
                   {/* Dietary Restrictions */}
                   <div className="min-w-0">
                     <InlineEdit
-                      value={member.allergies || ''}
-                      onSave={(value) => handleFieldUpdate(member.id, 'allergies', value)}
+                      value={member.allergies || ""}
+                      onSave={(value) =>
+                        handleFieldUpdate(member.id, "allergies", value)
+                      }
                       placeholder="None"
                       className="w-full"
                     />
@@ -195,7 +221,6 @@ export const CrewSection: React.FC<CrewSectionProps> = ({
           )}
         </>
       )}
-
     </div>
   );
 };

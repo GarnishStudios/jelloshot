@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import type { Project } from '../../types';
-import { projectsService } from '../../services/projects.service';
-import { formatTimeTo12Hour } from '../../utils/timeCalculations';
-import { InlineEdit } from '../ui/InlineEdit';
-import { TimeInput12Hour } from '../ui/TimeInput12Hour';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import type { Project } from "../../types";
+import { projectsService } from "../../services/projects.service";
+import { formatTimeTo12Hour } from "../../utils/timeCalculations";
+import { InlineEdit } from "../ui/InlineEdit";
+import { TimeInput12Hour } from "../ui/TimeInput12Hour";
 
 interface ProjectDetailsSectionProps {
   project: Project;
@@ -15,21 +15,21 @@ interface ProjectDetailsSectionProps {
 export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
   project,
   onUpdate,
-  onTimeChange
+  onTimeChange,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const handleFieldUpdate = async (field: keyof Project, value: string) => {
     try {
       const updatedProject = await projectsService.updateProject(project.id, {
-        [field]: value || null
+        [field]: value || null,
       });
       onUpdate(updatedProject);
 
       // Notify parent if start_time or end_time changed
-      if ((field === 'start_time' || field === 'end_time') && onTimeChange) {
+      if ((field === "start_time" || field === "end_time") && onTimeChange) {
         onTimeChange(
-          updatedProject.start_time || '',
-          updatedProject.end_time || ''
+          updatedProject.start_time || "",
+          updatedProject.end_time || "",
         );
       }
     } catch (error) {
@@ -39,14 +39,18 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
   };
 
   return (
-    <div className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-8 transition-all duration-200 shadow-2xl shadow-black/20 ${
-      isExpanded ? 'p-8' : 'p-6'
-    }`}>
+    <div
+      className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-8 transition-all duration-200 shadow-2xl shadow-black/20 ${
+        isExpanded ? "p-8" : "p-6"
+      }`}
+    >
       <div className={isExpanded ? "mb-8" : "mb-0"}>
         <div className="flex items-center justify-between">
-          <h2 className={`text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent transition-all duration-200 ${
-            isExpanded ? 'mb-2' : 'mb-0'
-          }`}>
+          <h2
+            className={`text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent transition-all duration-200 ${
+              isExpanded ? "mb-2" : "mb-0"
+            }`}
+          >
             Project Details
           </h2>
           <button
@@ -80,13 +84,18 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
               {project.shoot_date && (
                 <span className="flex items-center gap-1">
                   <span className="font-medium">Date:</span>
-                  <span>{new Date(project.shoot_date).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(project.shoot_date).toLocaleDateString()}
+                  </span>
                 </span>
               )}
               {project.start_time && project.end_time && (
                 <span className="flex items-center gap-1">
                   <span className="font-medium">Time:</span>
-                  <span>{formatTimeTo12Hour(project.start_time)} - {formatTimeTo12Hour(project.end_time)}</span>
+                  <span>
+                    {formatTimeTo12Hour(project.start_time)} -{" "}
+                    {formatTimeTo12Hour(project.end_time)}
+                  </span>
                 </span>
               )}
             </div>
@@ -108,7 +117,7 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                 </label>
                 <InlineEdit
                   value={project.name}
-                  onSave={(value) => handleFieldUpdate('name', value)}
+                  onSave={(value) => handleFieldUpdate("name", value)}
                   placeholder="Major Brand Commercial"
                   className="w-full"
                 />
@@ -120,8 +129,8 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                   Call Time
                 </label>
                 <InlineEdit
-                  value={project.call_time || ''}
-                  onSave={(value) => handleFieldUpdate('call_time', value)}
+                  value={project.call_time || ""}
+                  onSave={(value) => handleFieldUpdate("call_time", value)}
                   placeholder="09:00"
                   type="time"
                   className="w-full"
@@ -139,8 +148,8 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                   Shoot Address
                 </label>
                 <InlineEdit
-                  value={project.location || ''}
-                  onSave={(value) => handleFieldUpdate('location', value)}
+                  value={project.location || ""}
+                  onSave={(value) => handleFieldUpdate("location", value)}
                   placeholder="Full address for crew directions"
                   className="w-full"
                 />
@@ -155,8 +164,10 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                   Client Name
                 </label>
                 <InlineEdit
-                  value={project.production_company || ''}
-                  onSave={(value) => handleFieldUpdate('production_company', value)}
+                  value={project.production_company || ""}
+                  onSave={(value) =>
+                    handleFieldUpdate("production_company", value)
+                  }
                   placeholder="Client or company name"
                   className="w-full"
                 />
@@ -165,11 +176,14 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
               {/* Start Time */}
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-3">
-                  Start Time <span className="text-xs text-slate-400">(controls first shot)</span>
+                  Start Time{" "}
+                  <span className="text-xs text-slate-400">
+                    (controls first shot)
+                  </span>
                 </label>
                 <TimeInput12Hour
-                  value={project.start_time || ''}
-                  onSave={(value) => handleFieldUpdate('start_time', value)}
+                  value={project.start_time || ""}
+                  onSave={(value) => handleFieldUpdate("start_time", value)}
                   placeholder="09:00 AM"
                   className="w-full"
                 />
@@ -181,8 +195,8 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                   Location Type
                 </label>
                 <InlineEdit
-                  value={project.description || ''}
-                  onSave={(value) => handleFieldUpdate('description', value)}
+                  value={project.description || ""}
+                  onSave={(value) => handleFieldUpdate("description", value)}
                   placeholder="Studio with controlled lighting setup"
                   className="w-full"
                 />
@@ -198,8 +212,10 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                 Shoot Date
               </label>
               <InlineEdit
-                value={project.shoot_date ? project.shoot_date.split('T')[0] : ''}
-                onSave={(value) => handleFieldUpdate('shoot_date', value)}
+                value={
+                  project.shoot_date ? project.shoot_date.split("T")[0] : ""
+                }
+                onSave={(value) => handleFieldUpdate("shoot_date", value)}
                 placeholder="12/01/2023"
                 type="date"
                 className="w-full"
@@ -212,8 +228,8 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
                 End Time
               </label>
               <TimeInput12Hour
-                value={project.end_time || ''}
-                onSave={(value) => handleFieldUpdate('end_time', value)}
+                value={project.end_time || ""}
+                onSave={(value) => handleFieldUpdate("end_time", value)}
                 placeholder="05:30 PM"
                 className="w-full"
               />

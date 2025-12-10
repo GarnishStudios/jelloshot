@@ -1,5 +1,5 @@
-import api from './api';
-import type { Shotlist } from '../types';
+import api from "./api";
+import type { Shotlist } from "../types";
 
 export const shotlistsService = {
   async getProjectShotlists(projectId: string): Promise<Shotlist[]> {
@@ -12,8 +12,14 @@ export const shotlistsService = {
     return response.data;
   },
 
-  async createShotlist(projectId: string, data: Partial<Shotlist>): Promise<Shotlist> {
-    const response = await api.post(`/api/projects/${projectId}/shotlists`, data);
+  async createShotlist(
+    projectId: string,
+    data: Partial<Shotlist>,
+  ): Promise<Shotlist> {
+    const response = await api.post(
+      `/api/projects/${projectId}/shotlists`,
+      data,
+    );
     return response.data;
   },
 
@@ -24,5 +30,5 @@ export const shotlistsService = {
 
   async deleteShotlist(id: string): Promise<void> {
     await api.delete(`/api/shotlists/${id}`);
-  }
+  },
 };

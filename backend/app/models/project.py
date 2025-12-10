@@ -7,11 +7,13 @@ import enum
 
 from app.db.database import Base
 
+
 class ProjectStatus(str, enum.Enum):
     PRE_PRODUCTION = "pre_production"
     PRODUCTION = "production"
     POST_PRODUCTION = "post_production"
     COMPLETED = "completed"
+
 
 class Project(Base):
     __tablename__ = "projects"
@@ -38,4 +40,6 @@ class Project(Base):
 
     owner = relationship("User", back_populates="projects")
     client = relationship("Client", back_populates="projects")
-    shotlists = relationship("Shotlist", back_populates="project", cascade="all, delete-orphan")
+    shotlists = relationship(
+        "Shotlist", back_populates="project", cascade="all, delete-orphan"
+    )

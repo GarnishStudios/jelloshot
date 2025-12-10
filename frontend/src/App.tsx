@@ -1,15 +1,20 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthStore } from './stores/authStore';
-import { useThemeStore } from './stores/themeStore';
-import { LoginForm } from './components/auth/LoginForm';
-import { Layout } from './components/layout/Layout';
-import { Clients } from './pages/Clients';
-import { ShotlistDetail } from './pages/ShotlistDetail';
-import { ClientDetail } from './pages/ClientDetail';
-import { Debug } from './pages/Debug';
-import { PrivateRoute } from './components/PrivateRoute';
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAuthStore } from "./stores/authStore";
+import { useThemeStore } from "./stores/themeStore";
+import { LoginForm } from "./components/auth/LoginForm";
+import { Layout } from "./components/layout/Layout";
+import { Clients } from "./pages/Clients";
+import { ShotlistDetail } from "./pages/ShotlistDetail";
+import { ClientDetail } from "./pages/ClientDetail";
+import { Debug } from "./pages/Debug";
+import { PrivateRoute } from "./components/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,10 +25,10 @@ function App() {
   useEffect(() => {
     // Initialize theme on mount
     const root = document.documentElement;
-    if (mode === 'dark') {
-      root.classList.add('dark');
+    if (mode === "dark") {
+      root.classList.add("dark");
     } else {
-      root.classList.remove('dark');
+      root.classList.remove("dark");
     }
   }, [mode]);
 
@@ -57,4 +62,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

@@ -1,9 +1,9 @@
-import React from 'react';
-import { useAuthStore } from '../../stores/authStore';
+import React from "react";
+import { useAuthStore } from "../../stores/authStore";
 
 export const LoginForm: React.FC = () => {
   const { error } = useAuthStore();
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   const handleGoogleLogin = () => {
     window.location.href = `${API_URL}/api/auth/login/google`;

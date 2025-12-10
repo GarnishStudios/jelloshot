@@ -1,6 +1,15 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Clock, Camera, Users, MessageSquare, Bell, FileText } from 'lucide-react';
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useParams, Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  Plus,
+  Clock,
+  Camera,
+  Users,
+  MessageSquare,
+  Bell,
+  FileText,
+} from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -8,32 +17,49 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent
-} from '@dnd-kit/core';
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import type { Shotlist, ShotlistItem, CrewMember, ClientMember, Project } from '../types';
-import { shotlistItemsService } from '../services/shotlist-items.service';
-import { shotlistsService } from '../services/shotlists.service';
-import { projectsService } from '../services/projects.service';
-import { crewService } from '../services/crew.service';
-import { formatDuration, recalculateStartTimes, recalculateStartTimesWithBoundaries, recalculateWithShotBelowDistribution, formatTimeTo12Hour } from '../utils/timeCalculations';
-import { ShotlistItemCard } from '../components/shotlist-items/ShotlistItemCard';
-import { ProjectDetailsSection } from '../components/project/ProjectDetailsSection';
-import { CrewSection } from '../components/project/CrewSection';
-import { ClientSection } from '../components/project/ClientSection';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import type {
+  Shotlist,
+  ShotlistItem,
+  CrewMember,
+  ClientMember,
+  Project,
+} from "../types";
+import { shotlistItemsService } from "../services/shotlist-items.service";
+import { shotlistsService } from "../services/shotlists.service";
+import { projectsService } from "../services/projects.service";
+import { crewService } from "../services/crew.service";
+import {
+  formatDuration,
+  recalculateStartTimes,
+  recalculateStartTimesWithBoundaries,
+  recalculateWithShotBelowDistribution,
+  formatTimeTo12Hour,
+} from "../utils/timeCalculations";
+import { ShotlistItemCard } from "../components/shotlist-items/ShotlistItemCard";
+import { ProjectDetailsSection } from "../components/project/ProjectDetailsSection";
+import { CrewSection } from "../components/project/CrewSection";
+import { ClientSection } from "../components/project/ClientSection";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export const ShotlistDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-
 
   if (!id) {
     return (
@@ -50,7 +76,10 @@ export const ShotlistDetail: React.FC = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [crewMembers, setCrewMembers] = useState<CrewMember[]>([]);
   const [clientMembers, setClientMembers] = useState<ClientMember[]>([]);
-  const [lastManuallyChangedItem, setLastManuallyChangedItem] = useState<{ itemId: string; duration: number } | null>(null);
+  const [lastManuallyChangedItem, setLastManuallyChangedItem] = useState<{
+    itemId: string;
+    duration: number;
+  } | null>(null);
 
   const handleProjectUpdate = (updates: Partial<Project>) => {
     if (project) {
@@ -62,66 +91,76 @@ export const ShotlistDetail: React.FC = () => {
     // Create a temporary crew member with local ID since backend doesn't exist yet
     const newMember: CrewMember = {
       id: Date.now().toString(), // Temporary ID
-      project_id: project?.id || '',
-      name: memberData.name || '',
-      role: memberData.role || '',
-      email: memberData.email || '',
-      phone: memberData.phone || '',
-      call_time: memberData.call_time || '',
-      allergies: memberData.allergies || '',
-      notes: memberData.notes || '',
+      project_id: project?.id || "",
+      name: memberData.name || "",
+      role: memberData.role || "",
+      email: memberData.email || "",
+      phone: memberData.phone || "",
+      call_time: memberData.call_time || "",
+      allergies: memberData.allergies || "",
+      notes: memberData.notes || "",
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     setCrewMembers([...crewMembers, newMember]);
   };
 
   const handleUpdateCrewMember = (id: string, updates: Partial<CrewMember>) => {
-    setCrewMembers(crewMembers.map(member =>
-      member.id === id ? { ...member, ...updates, updated_at: new Date().toISOString() } : member
-    ));
+    setCrewMembers(
+      crewMembers.map((member) =>
+        member.id === id
+          ? { ...member, ...updates, updated_at: new Date().toISOString() }
+          : member,
+      ),
+    );
   };
 
   const handleDeleteCrewMember = (id: string) => {
-    setCrewMembers(crewMembers.filter(member => member.id !== id));
+    setCrewMembers(crewMembers.filter((member) => member.id !== id));
   };
 
   const handleAddClientMember = (memberData: Partial<ClientMember>) => {
     // Create a temporary client member with local ID since backend doesn't exist yet
     const newMember: ClientMember = {
       id: Date.now().toString(), // Temporary ID
-      project_id: project?.id || '',
-      name: memberData.name || '',
-      company: memberData.company || '',
-      email: memberData.email || '',
-      phone: memberData.phone || '',
-      call_time: memberData.call_time || '',
-      allergies: memberData.allergies || '',
-      notes: memberData.notes || '',
+      project_id: project?.id || "",
+      name: memberData.name || "",
+      company: memberData.company || "",
+      email: memberData.email || "",
+      phone: memberData.phone || "",
+      call_time: memberData.call_time || "",
+      allergies: memberData.allergies || "",
+      notes: memberData.notes || "",
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     setClientMembers([...clientMembers, newMember]);
   };
 
-  const handleUpdateClientMember = (id: string, updates: Partial<ClientMember>) => {
-    setClientMembers(clientMembers.map(member =>
-      member.id === id ? { ...member, ...updates, updated_at: new Date().toISOString() } : member
-    ));
+  const handleUpdateClientMember = (
+    id: string,
+    updates: Partial<ClientMember>,
+  ) => {
+    setClientMembers(
+      clientMembers.map((member) =>
+        member.id === id
+          ? { ...member, ...updates, updated_at: new Date().toISOString() }
+          : member,
+      ),
+    );
   };
 
   const handleDeleteClientMember = (id: string) => {
-    setClientMembers(clientMembers.filter(member => member.id !== id));
+    setClientMembers(clientMembers.filter((member) => member.id !== id));
   };
-
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const loadData = useCallback(async () => {
@@ -138,15 +177,17 @@ export const ShotlistDetail: React.FC = () => {
       // If no shotlist exists, create a default one
       if (!currentShotlist) {
         currentShotlist = await shotlistsService.createShotlist(id, {
-          name: 'Main Shotlist',
-          notes: 'Primary shot list for this project'
+          name: "Main Shotlist",
+          notes: "Primary shot list for this project",
         });
       }
 
       setShotlist(currentShotlist);
 
       // Load shotlist items
-      const items = await shotlistItemsService.getShotlistItems(currentShotlist.id);
+      const items = await shotlistItemsService.getShotlistItems(
+        currentShotlist.id,
+      );
       setShotlistItems(items);
 
       // Load project details
@@ -158,13 +199,15 @@ export const ShotlistDetail: React.FC = () => {
         const crew = await crewService.getProjectCrew(id);
         setCrewMembers(crew);
       } catch (crewError) {
-        console.warn('Crew endpoint not available yet:', crewError);
+        console.warn("Crew endpoint not available yet:", crewError);
         setCrewMembers([]); // Set empty array if crew endpoint doesn't exist
       }
-
     } catch (err: any) {
-      console.error('Failed to load shotlist data:', err);
-      const errorMessage = err.response?.data?.detail || err.message || 'Failed to load shotlist data';
+      console.error("Failed to load shotlist data:", err);
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.message ||
+        "Failed to load shotlist data";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -193,30 +236,41 @@ export const ShotlistDetail: React.FC = () => {
           lastManuallyChangedItem.itemId,
           lastManuallyChangedItem.duration,
           startTime,
-          endTime
+          endTime,
         );
       } else {
         return recalculateStartTimesWithBoundaries(
           shotlistItems,
           startTime,
-          endTime
+          endTime,
         );
       }
     } else {
       return recalculateStartTimes(shotlistItems, startTime);
     }
-  }, [shotlistItems, project?.start_time, project?.end_time, shotlist?.call_time, shotlist?.wrap_time, lastManuallyChangedItem]);
+  }, [
+    shotlistItems,
+    project?.start_time,
+    project?.end_time,
+    shotlist?.call_time,
+    shotlist?.wrap_time,
+    lastManuallyChangedItem,
+  ]);
 
   // Automatically update backend when durations are redistributed due to manual changes
   useEffect(() => {
     if (lastManuallyChangedItem && calculatedItems.length > 0) {
       const currentItems = shotlistItems;
-      const calculatedItemsMap = new Map(calculatedItems.map(item => [item.id, item]));
+      const calculatedItemsMap = new Map(
+        calculatedItems.map((item) => [item.id, item]),
+      );
 
       // Check if any durations actually changed (to avoid infinite loops)
-      const durationsChanged = currentItems.some(item => {
+      const durationsChanged = currentItems.some((item) => {
         const calculatedItem = calculatedItemsMap.get(item.id);
-        return calculatedItem && calculatedItem.shot_duration !== item.shot_duration;
+        return (
+          calculatedItem && calculatedItem.shot_duration !== item.shot_duration
+        );
       });
 
       if (durationsChanged) {
@@ -232,8 +286,8 @@ export const ShotlistDetail: React.FC = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id && shotlist) {
-      const oldIndex = shotlistItems.findIndex(item => item.id === active.id);
-      const newIndex = shotlistItems.findIndex(item => item.id === over.id);
+      const oldIndex = shotlistItems.findIndex((item) => item.id === active.id);
+      const newIndex = shotlistItems.findIndex((item) => item.id === over.id);
 
       const newItems = arrayMove(shotlistItems, oldIndex, newIndex);
       setShotlistItems(newItems);
@@ -241,11 +295,11 @@ export const ShotlistDetail: React.FC = () => {
       try {
         const reorderedItems = await shotlistItemsService.reorderItems(
           shotlist.id,
-          newItems.map(item => item.id)
+          newItems.map((item) => item.id),
         );
         setShotlistItems(reorderedItems);
       } catch (error) {
-        console.error('Failed to reorder items:', error);
+        console.error("Failed to reorder items:", error);
         setShotlistItems(shotlistItems); // Revert on error
       }
     }
@@ -253,7 +307,7 @@ export const ShotlistDetail: React.FC = () => {
 
   const handleAddItem = async () => {
     if (!shotlist) {
-      alert('No shotlist found');
+      alert("No shotlist found");
       return;
     }
 
@@ -261,15 +315,16 @@ export const ShotlistDetail: React.FC = () => {
       const newItem = await shotlistItemsService.createItem(shotlist.id, {
         shot_name: `Shot ${shotlistItems.length + 1}`,
         shot_duration: 10,
-        order_index: shotlistItems.length
+        order_index: shotlistItems.length,
       });
 
       setShotlistItems([...shotlistItems, newItem]);
     } catch (error) {
-      console.error('Failed to create item:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error("Failed to create item:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       const errorDetail = (error as any)?.response?.data?.detail;
-      alert('Failed to create shot item: ' + (errorDetail || errorMessage));
+      alert("Failed to create shot item: " + (errorDetail || errorMessage));
     }
   };
 
@@ -278,32 +333,40 @@ export const ShotlistDetail: React.FC = () => {
 
     try {
       const newItem = await shotlistItemsService.createItem(shotlist.id, {
-        shot_name: 'Lunch Break',
-        shot_type: 'Lunch',
+        shot_name: "Lunch Break",
+        shot_type: "Lunch",
         shot_duration: 60, // Default 1 hour lunch break
-        order_index: shotlistItems.length
+        order_index: shotlistItems.length,
       });
       setShotlistItems([...shotlistItems, newItem]);
     } catch (error) {
-      console.error('Failed to create lunch break:', error);
+      console.error("Failed to create lunch break:", error);
     }
   };
 
-  const handleUpdateItem = async (id: string, updates: Partial<ShotlistItem>) => {
+  const handleUpdateItem = async (
+    id: string,
+    updates: Partial<ShotlistItem>,
+  ) => {
     try {
       // Check if this is a manual duration change (but not just a lock toggle)
-      const isJustLockToggle = Object.keys(updates).length === 1 && updates.hasOwnProperty('duration_locked');
+      const isJustLockToggle =
+        Object.keys(updates).length === 1 &&
+        updates.hasOwnProperty("duration_locked");
 
       if (updates.shot_duration !== undefined && !isJustLockToggle) {
-        setLastManuallyChangedItem({ itemId: id, duration: updates.shot_duration });
+        setLastManuallyChangedItem({
+          itemId: id,
+          duration: updates.shot_duration,
+        });
       }
 
       const updatedItem = await shotlistItemsService.updateItem(id, updates);
-      setShotlistItems(items =>
-        items.map(item => item.id === id ? updatedItem : item)
+      setShotlistItems((items) =>
+        items.map((item) => (item.id === id ? updatedItem : item)),
       );
     } catch (error) {
-      console.error('Failed to update item:', error);
+      console.error("Failed to update item:", error);
     }
   };
 
@@ -315,32 +378,36 @@ export const ShotlistDetail: React.FC = () => {
 
       // Update the local state immediately for UI responsiveness
       // Also automatically lock the duration when manually edited
-      setShotlistItems(items =>
-        items.map(item =>
+      setShotlistItems((items) =>
+        items.map((item) =>
           item.id === id
             ? { ...item, shot_duration: newDuration, duration_locked: true }
-            : item
-        )
+            : item,
+        ),
       );
 
       // Update the backend with both duration and lock status
       await shotlistItemsService.updateItem(id, {
         shot_duration: newDuration,
-        duration_locked: true
+        duration_locked: true,
       });
     } catch (error) {
-      console.error('Failed to update duration:', error);
+      console.error("Failed to update duration:", error);
       // Revert local state on error
       loadData();
     }
   };
 
   // Update all shot durations when redistribution happens
-  const handleBulkDurationUpdate = async (itemsWithNewDurations: typeof shotlistItems) => {
+  const handleBulkDurationUpdate = async (
+    itemsWithNewDurations: typeof shotlistItems,
+  ) => {
     try {
       // Update each item's duration in the backend
-      const updatePromises = itemsWithNewDurations.map(item =>
-        shotlistItemsService.updateItem(item.id, { shot_duration: item.shot_duration })
+      const updatePromises = itemsWithNewDurations.map((item) =>
+        shotlistItemsService.updateItem(item.id, {
+          shot_duration: item.shot_duration,
+        }),
       );
 
       await Promise.all(updatePromises);
@@ -348,43 +415,51 @@ export const ShotlistDetail: React.FC = () => {
       // Update local state with all the new durations
       setShotlistItems(itemsWithNewDurations);
     } catch (error) {
-      console.error('Failed to update shot durations:', error);
+      console.error("Failed to update shot durations:", error);
     }
   };
 
   const handleDeleteItem = async (id: string) => {
     try {
       await shotlistItemsService.deleteItem(id);
-      setShotlistItems(items => items.filter(item => item.id !== id));
+      setShotlistItems((items) => items.filter((item) => item.id !== id));
     } catch (error) {
-      console.error('Failed to delete item:', error);
+      console.error("Failed to delete item:", error);
     }
   };
 
   const handleAddPropertyToAll = async (propertyKey: string) => {
     try {
       // Get all shots that don't already have this property
-      const shotsToUpdate = shotlistItems.filter(item =>
-        item.shot_type !== 'Lunch' && // Skip lunch breaks
-        (!item.custom_properties || !item.custom_properties.hasOwnProperty(propertyKey))
+      const shotsToUpdate = shotlistItems.filter(
+        (item) =>
+          item.shot_type !== "Lunch" && // Skip lunch breaks
+          (!item.custom_properties ||
+            !item.custom_properties.hasOwnProperty(propertyKey)),
       );
 
       // Update each shot that doesn't have the property
-      const updatePromises = shotsToUpdate.map(item => {
+      const updatePromises = shotsToUpdate.map((item) => {
         const currentProperties = item.custom_properties || {};
         const updatedProperties = {
           ...currentProperties,
-          [propertyKey]: ''
+          [propertyKey]: "",
         };
-        return shotlistItemsService.updateItem(item.id, { custom_properties: updatedProperties });
+        return shotlistItemsService.updateItem(item.id, {
+          custom_properties: updatedProperties,
+        });
       });
 
       await Promise.all(updatePromises);
 
       // Update local state
-      setShotlistItems(items =>
-        items.map(item => {
-          if (item.shot_type === 'Lunch' || (item.custom_properties && item.custom_properties.hasOwnProperty(propertyKey))) {
+      setShotlistItems((items) =>
+        items.map((item) => {
+          if (
+            item.shot_type === "Lunch" ||
+            (item.custom_properties &&
+              item.custom_properties.hasOwnProperty(propertyKey))
+          ) {
             return item; // Skip lunch breaks and items that already have the property
           }
           const currentProperties = item.custom_properties || {};
@@ -392,13 +467,13 @@ export const ShotlistDetail: React.FC = () => {
             ...item,
             custom_properties: {
               ...currentProperties,
-              [propertyKey]: ''
-            }
+              [propertyKey]: "",
+            },
           };
-        })
+        }),
       );
     } catch (error) {
-      console.error('Failed to add property to all shots:', error);
+      console.error("Failed to add property to all shots:", error);
     }
   };
 
@@ -407,14 +482,19 @@ export const ShotlistDetail: React.FC = () => {
     // The useMemo will automatically recalculate with the new project times
   };
 
-  const totalDuration = shotlistItems.reduce((total, item) => total + item.shot_duration, 0);
+  const totalDuration = shotlistItems.reduce(
+    (total, item) => total + item.shot_duration,
+    0,
+  );
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <div className="container mx-auto p-8">
           <div className="flex items-center justify-center h-64">
-            <div className="text-lg text-muted-foreground">Loading shotlist...</div>
+            <div className="text-lg text-muted-foreground">
+              Loading shotlist...
+            </div>
           </div>
         </div>
       </div>
@@ -438,7 +518,7 @@ export const ShotlistDetail: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="text-destructive mb-4">{error}</p>
-              {error.includes('Not authenticated') && (
+              {error.includes("Not authenticated") && (
                 <Button asChild>
                   <Link to="/login">Please Login</Link>
                 </Button>
@@ -463,7 +543,12 @@ export const ShotlistDetail: React.FC = () => {
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20">
             <div className="flex items-center justify-between">
               <div className="space-y-3">
-                <Button variant="ghost" size="sm" asChild className="text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200"
+                >
                   <Link to="/clients">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to Clients
@@ -471,9 +556,11 @@ export const ShotlistDetail: React.FC = () => {
                 </Button>
                 <div className="space-y-2">
                   <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-                    {project?.name || 'Project'}
+                    {project?.name || "Project"}
                   </h1>
-                  <p className="text-slate-400 font-medium">Shot List Management</p>
+                  <p className="text-slate-400 font-medium">
+                    Shot List Management
+                  </p>
                 </div>
                 {shotlist && (
                   <div className="flex items-center gap-4 pt-2">
@@ -491,7 +578,8 @@ export const ShotlistDetail: React.FC = () => {
                     )}
                     <Badge className="gap-1 bg-emerald-500/20 text-emerald-300 border-emerald-400/30 hover:bg-emerald-500/30 transition-colors">
                       <FileText className="h-3 w-3" />
-                      {shotlistItems.length} shots • {formatDuration(totalDuration)}
+                      {shotlistItems.length} shots •{" "}
+                      {formatDuration(totalDuration)}
                     </Badge>
                   </div>
                 )}
@@ -502,7 +590,11 @@ export const ShotlistDetail: React.FC = () => {
                 <Plus className="h-4 w-4" />
                 Add Shot
               </Button>
-              <Button onClick={handleAddLunchBreak} variant="secondary" className="gap-2">
+              <Button
+                onClick={handleAddLunchBreak}
+                variant="secondary"
+                className="gap-2"
+              >
                 🍽️ Lunch Break
               </Button>
             </div>
@@ -542,19 +634,30 @@ export const ShotlistDetail: React.FC = () => {
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl text-slate-200 font-semibold">Shot List</CardTitle>
+                      <CardTitle className="text-xl text-slate-200 font-semibold">
+                        Shot List
+                      </CardTitle>
                       <CardDescription className="text-slate-400">
-                        {shotlistItems.length} shots • {project?.start_time && project?.end_time ?
-                          `${formatTimeTo12Hour(project.start_time)} - ${formatTimeTo12Hour(project.end_time)}` :
-                          formatDuration(totalDuration)}
+                        {shotlistItems.length} shots •{" "}
+                        {project?.start_time && project?.end_time
+                          ? `${formatTimeTo12Hour(project.start_time)} - ${formatTimeTo12Hour(project.end_time)}`
+                          : formatDuration(totalDuration)}
                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={handleAddItem} className="gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                      <Button
+                        size="sm"
+                        onClick={handleAddItem}
+                        className="gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+                      >
                         <Plus className="h-3 w-3" />
                         Add Shot
                       </Button>
-                      <Button size="sm" onClick={handleAddLunchBreak} className="gap-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                      <Button
+                        size="sm"
+                        onClick={handleAddLunchBreak}
+                        className="gap-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+                      >
                         🍽️ Lunch
                       </Button>
                     </div>
@@ -565,12 +668,19 @@ export const ShotlistDetail: React.FC = () => {
                 <div className="px-6 pb-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-400">
-                      <span>{calculatedItems.filter(item => item.is_completed).length} completed</span>
                       <span>
-                        {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length
+                        {
+                          calculatedItems.filter((item) => item.is_completed)
+                            .length
+                        }{" "}
+                        completed
+                      </span>
+                      <span>
+                        {calculatedItems.length > 0 &&
+                        calculatedItems.filter((item) => item.is_completed)
+                          .length === calculatedItems.length
                           ? "🍸 Martini Shot! 🎬"
-                          : "Shot Progress"
-                        }
+                          : "Shot Progress"}
                       </span>
                       <span>{calculatedItems.length} total</span>
                     </div>
@@ -578,16 +688,22 @@ export const ShotlistDetail: React.FC = () => {
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 rounded-full transition-all duration-500 ease-out"
                         style={{
-                          width: `${calculatedItems.length > 0 ? (calculatedItems.filter(item => item.is_completed).length / calculatedItems.length) * 100 : 0}%`
+                          width: `${calculatedItems.length > 0 ? (calculatedItems.filter((item) => item.is_completed).length / calculatedItems.length) * 100 : 0}%`,
                         }}
                       >
                         {/* Effect at the end of progress */}
-                        {calculatedItems.filter(item => item.is_completed).length > 0 && (
+                        {calculatedItems.filter((item) => item.is_completed)
+                          .length > 0 && (
                           <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2">
-                            {calculatedItems.length > 0 && calculatedItems.filter(item => item.is_completed).length === calculatedItems.length ? (
+                            {calculatedItems.length > 0 &&
+                            calculatedItems.filter((item) => item.is_completed)
+                              .length === calculatedItems.length ? (
                               // Martini glass for 100% completion (Martini Shot!)
                               <div className="relative">
-                                <div className="text-xl animate-bounce" style={{ animationDuration: '1s' }}>
+                                <div
+                                  className="text-xl animate-bounce"
+                                  style={{ animationDuration: "1s" }}
+                                >
                                   🍸
                                 </div>
                                 {/* Sparkle effect around the martini */}
@@ -606,7 +722,6 @@ export const ShotlistDetail: React.FC = () => {
                         )}
                       </div>
                     </div>
-
                   </div>
                 </div>
 
@@ -618,15 +733,23 @@ export const ShotlistDetail: React.FC = () => {
                           <Camera className="h-6 w-6 text-muted-foreground" />
                         </div>
                         <div className="space-y-2">
-                          <h3 className="text-lg font-medium">No shots added yet</h3>
-                          <p className="text-sm text-muted-foreground">Create your first shot to get started</p>
+                          <h3 className="text-lg font-medium">
+                            No shots added yet
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            Create your first shot to get started
+                          </p>
                         </div>
                         <div className="flex gap-2 justify-center">
                           <Button onClick={handleAddItem} className="gap-2">
                             <Plus className="h-4 w-4" />
                             Add Your First Shot
                           </Button>
-                          <Button onClick={handleAddLunchBreak} variant="outline" className="gap-2">
+                          <Button
+                            onClick={handleAddLunchBreak}
+                            variant="outline"
+                            className="gap-2"
+                          >
                             🍽️ Add Lunch Break
                           </Button>
                         </div>
@@ -639,7 +762,7 @@ export const ShotlistDetail: React.FC = () => {
                       onDragEnd={handleDragEnd}
                     >
                       <SortableContext
-                        items={calculatedItems.map(item => item.id)}
+                        items={calculatedItems.map((item) => item.id)}
                         strategy={verticalListSortingStrategy}
                       >
                         <div className="space-y-3">
@@ -667,21 +790,35 @@ export const ShotlistDetail: React.FC = () => {
               {/* Shot Preview */}
               <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-slate-200 font-semibold">Shot Preview</CardTitle>
-                  <CardDescription className="text-slate-400">All {calculatedItems.length} shots</CardDescription>
+                  <CardTitle className="text-lg text-slate-200 font-semibold">
+                    Shot Preview
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    All {calculatedItems.length} shots
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
                   {calculatedItems.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-6">No shots to preview</p>
+                    <p className="text-sm text-muted-foreground text-center py-6">
+                      No shots to preview
+                    </p>
                   ) : (
                     <div className="max-h-96 overflow-y-auto px-6 pb-6">
                       <div className="space-y-3">
                         {calculatedItems.map((item, index) => (
-                          <div key={item.id} className="flex items-center justify-between p-2 rounded-md hover:bg-white/5 transition-colors">
+                          <div
+                            key={item.id}
+                            className="flex items-center justify-between p-2 rounded-md hover:bg-white/5 transition-colors"
+                          >
                             <div className="space-y-1">
-                              <p className="text-sm font-medium text-white">{item.shot_name}</p>
+                              <p className="text-sm font-medium text-white">
+                                {item.shot_name}
+                              </p>
                               <p className="text-xs text-slate-400">
-                                {item.start_time ? formatTimeTo12Hour(item.start_time) : '--:--'} • {item.shot_duration}min
+                                {item.start_time
+                                  ? formatTimeTo12Hour(item.start_time)
+                                  : "--:--"}{" "}
+                                • {item.shot_duration}min
                               </p>
                             </div>
                             <Badge
@@ -692,7 +829,7 @@ export const ShotlistDetail: React.FC = () => {
                                 index === 1 && "bg-blue-500",
                                 index === 2 && "bg-purple-500",
                                 index === 3 && "bg-orange-500",
-                                index >= 4 && "bg-slate-500"
+                                index >= 4 && "bg-slate-500",
                               )}
                             />
                           </div>
@@ -706,8 +843,12 @@ export const ShotlistDetail: React.FC = () => {
               {/* Crew & Communication */}
               <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/20">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-slate-200 font-semibold">Team & Communication</CardTitle>
-                  <CardDescription className="text-slate-400">Coordinate with your production team</CardDescription>
+                  <CardTitle className="text-lg text-slate-200 font-semibold">
+                    Team & Communication
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Coordinate with your production team
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button className="w-full justify-start gap-2">

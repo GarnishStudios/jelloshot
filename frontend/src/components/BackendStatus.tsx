@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
-import { healthService, type HealthStatus } from '../services/health.service';
+import { useEffect, useState } from "react";
+import { healthService, type HealthStatus } from "../services/health.service";
 
 export const BackendStatus: React.FC = () => {
-  const [health, setHealth] = useState<HealthStatus>({ status: 'checking', message: 'Checking...' });
+  const [health, setHealth] = useState<HealthStatus>({
+    status: "checking",
+    message: "Checking...",
+  });
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -19,23 +22,23 @@ export const BackendStatus: React.FC = () => {
 
   const getStatusColor = () => {
     switch (health.status) {
-      case 'healthy':
-        return 'text-green-400';
-      case 'unhealthy':
-        return 'text-red-400';
+      case "healthy":
+        return "text-green-400";
+      case "unhealthy":
+        return "text-red-400";
       default:
-        return 'text-yellow-400';
+        return "text-yellow-400";
     }
   };
 
   const getStatusIcon = () => {
     switch (health.status) {
-      case 'healthy':
-        return '●';
-      case 'unhealthy':
-        return '●';
+      case "healthy":
+        return "●";
+      case "unhealthy":
+        return "●";
       default:
-        return '●';
+        return "●";
     }
   };
 
@@ -49,4 +52,3 @@ export const BackendStatus: React.FC = () => {
     </div>
   );
 };
-

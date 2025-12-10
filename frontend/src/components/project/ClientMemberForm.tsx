@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import type { ClientMember } from '../../types';
+import React, { useState } from "react";
+import type { ClientMember } from "../../types";
 
 interface ClientMemberFormProps {
   onSubmit: (member: Partial<ClientMember>) => void;
@@ -10,16 +10,16 @@ interface ClientMemberFormProps {
 export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
   onSubmit,
   onCancel,
-  initialData
+  initialData,
 }) => {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    company: initialData?.company || '',
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    call_time: initialData?.call_time || '',
-    allergies: initialData?.allergies || '',
-    notes: initialData?.notes || ''
+    name: initialData?.name || "",
+    company: initialData?.company || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || "",
+    call_time: initialData?.call_time || "",
+    allergies: initialData?.allergies || "",
+    notes: initialData?.notes || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,7 +30,7 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
   return (
     <div className="bg-slate-800 p-6 rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
       <h3 className="text-lg font-medium text-white mb-4">
-        {initialData ? 'Edit Client Member' : 'Add Client Member'}
+        {initialData ? "Edit Client Member" : "Add Client Member"}
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -44,7 +44,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
               required
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="Full name"
             />
           </div>
@@ -57,7 +59,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
               type="text"
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, company: e.target.value })
+              }
               placeholder="Company or agency name"
             />
           </div>
@@ -72,7 +76,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
               type="email"
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               placeholder="email@example.com"
             />
           </div>
@@ -85,7 +91,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
               type="tel"
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               placeholder="(555) 123-4567"
             />
           </div>
@@ -99,7 +107,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
             type="time"
             className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             value={formData.call_time}
-            onChange={(e) => setFormData({ ...formData, call_time: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, call_time: e.target.value })
+            }
           />
           <p className="text-xs text-slate-400 mt-1">
             Specific call time for this client (optional)
@@ -114,7 +124,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
             type="text"
             className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             value={formData.allergies}
-            onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, allergies: e.target.value })
+            }
             placeholder="e.g., Nuts, Dairy, Vegetarian"
           />
         </div>
@@ -127,7 +139,9 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
             className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             rows={3}
             value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
             placeholder="Additional notes about this client..."
           />
         </div>
@@ -144,7 +158,7 @@ export const ClientMemberForm: React.FC<ClientMemberFormProps> = ({
             type="submit"
             className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
-            {initialData ? 'Save Changes' : 'Add Client Member'}
+            {initialData ? "Save Changes" : "Add Client Member"}
           </button>
         </div>
       </form>

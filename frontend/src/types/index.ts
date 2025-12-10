@@ -23,7 +23,7 @@ export interface Project {
   call_time?: string;
   start_time?: string;
   end_time?: string;
-  status?: 'pre_production' | 'production' | 'post_production' | 'completed';
+  status?: "pre_production" | "production" | "post_production" | "completed";
   created_at: string;
   updated_at: string;
 }
@@ -56,7 +56,7 @@ export interface ShotlistItem {
   id: string;
   shotlist_id: string;
   shot_name: string;
-  shot_type?: 'Standard' | 'Lunch' | 'Break'; // Keep for UI logic
+  shot_type?: "Standard" | "Lunch" | "Break"; // Keep for UI logic
   shot_description?: string; // Keep original field name to match API
   scheduled_time?: string; // 24-hour format HH:MM
   shot_duration: number; // in minutes

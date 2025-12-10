@@ -6,6 +6,7 @@ import uuid
 
 from app.db.database import Base
 
+
 class Shotlist(Base):
     __tablename__ = "shotlists"
 
@@ -21,4 +22,9 @@ class Shotlist(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     project = relationship("Project", back_populates="shotlists")
-    items = relationship("ShotlistItem", back_populates="shotlist", cascade="all, delete-orphan", order_by="ShotlistItem.order_index")
+    items = relationship(
+        "ShotlistItem",
+        back_populates="shotlist",
+        cascade="all, delete-orphan",
+        order_by="ShotlistItem.order_index",
+    )

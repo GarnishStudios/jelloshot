@@ -1,4 +1,14 @@
-from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Integer, Time, JSON, Boolean
+from sqlalchemy import (
+    Column,
+    String,
+    Text,
+    ForeignKey,
+    DateTime,
+    Integer,
+    Time,
+    JSON,
+    Boolean,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -6,13 +16,14 @@ import uuid
 
 from app.db.database import Base
 
+
 class ShotlistItem(Base):
     __tablename__ = "shotlist_items"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     shotlist_id = Column(UUID(as_uuid=True), ForeignKey("shotlists.id"), nullable=False)
     shot_name = Column(String(100), nullable=False)
-    shot_type = Column(String(50), default='Standard')  # Standard, Lunch, Break
+    shot_type = Column(String(50), default="Standard")  # Standard, Lunch, Break
     shot_description = Column(Text)  # Match actual database column name
     time_of_day = Column(String(50))  # dawn, morning, afternoon, evening, night
     shot_duration = Column(Integer)  # in minutes

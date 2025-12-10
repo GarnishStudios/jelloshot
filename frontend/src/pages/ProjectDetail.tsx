@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import type { Project, Shotlist } from '../types';
-import { projectsService } from '../services/projects.service';
-import { shotlistsService } from '../services/shotlists.service';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import type { Project, Shotlist } from "../types";
+import { projectsService } from "../services/projects.service";
+import { shotlistsService } from "../services/shotlists.service";
 
 export const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,12 +11,12 @@ export const ProjectDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showNewShotlistForm, setShowNewShotlistForm] = useState(false);
   const [newShotlist, setNewShotlist] = useState({
-    name: '',
-    shooting_date: '',
-    call_time: '08:00',
-    wrap_time: '18:00',
-    location: '',
-    notes: ''
+    name: "",
+    shooting_date: "",
+    call_time: "08:00",
+    wrap_time: "18:00",
+    location: "",
+    notes: "",
   });
 
   useEffect(() => {
@@ -29,19 +29,19 @@ export const ProjectDetail: React.FC = () => {
     try {
       const [projectData, shotlistsData] = await Promise.all([
         projectsService.getProject(id!),
-        shotlistsService.getProjectShotlists(id!)
+        shotlistsService.getProjectShotlists(id!),
       ]);
       setProject(projectData);
       setShotlists(shotlistsData);
     } catch (error: any) {
-      console.error('Failed to fetch project details:', error);
+      console.error("Failed to fetch project details:", error);
       if (error.response?.status === 401) {
-        alert('Your session has expired. Please log in again.');
-        window.location.href = '/login';
+        alert("Your session has expired. Please log in again.");
+        window.location.href = "/login";
       } else if (error.response?.status === 404) {
         setProject(null); // This will show "Project not found"
       } else {
-        console.error('Error fetching project:', error);
+        console.error("Error fetching project:", error);
         // Still set loading to false to show some content instead of infinite loading
       }
     } finally {
@@ -52,29 +52,32 @@ export const ProjectDetail: React.FC = () => {
   const handleCreateShotlist = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const createdShotlist = await shotlistsService.createShotlist(id!, newShotlist);
+      const createdShotlist = await shotlistsService.createShotlist(
+        id!,
+        newShotlist,
+      );
       setShotlists([...shotlists, createdShotlist]);
       setShowNewShotlistForm(false);
       setNewShotlist({
-        name: '',
-        shooting_date: '',
-        call_time: '08:00',
-        wrap_time: '18:00',
-        location: '',
-        notes: ''
+        name: "",
+        shooting_date: "",
+        call_time: "08:00",
+        wrap_time: "18:00",
+        location: "",
+        notes: "",
       });
     } catch (error) {
-      console.error('Failed to create shotlist:', error);
+      console.error("Failed to create shotlist:", error);
     }
   };
 
   const handleDeleteShotlist = async (shotlistId: string) => {
-    if (confirm('Are you sure you want to delete this shotlist?')) {
+    if (confirm("Are you sure you want to delete this shotlist?")) {
       try {
         await shotlistsService.deleteShotlist(shotlistId);
-        setShotlists(shotlists.filter(s => s.id !== shotlistId));
+        setShotlists(shotlists.filter((s) => s.id !== shotlistId));
       } catch (error) {
-        console.error('Failed to delete shotlist:', error);
+        console.error("Failed to delete shotlist:", error);
       }
     }
   };
@@ -98,22 +101,25 @@ export const ProjectDetail: React.FC = () => {
             <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
               {project.director && (
                 <div>
-                  <span className="font-medium">Director:</span> {project.director}
+                  <span className="font-medium">Director:</span>{" "}
+                  {project.director}
                 </div>
               )}
               {project.producer && (
                 <div>
-                  <span className="font-medium">Producer:</span> {project.producer}
+                  <span className="font-medium">Producer:</span>{" "}
+                  {project.producer}
                 </div>
               )}
               {project.location && (
                 <div>
-                  <span className="font-medium">Location:</span> {project.location}
+                  <span className="font-medium">Location:</span>{" "}
+                  {project.location}
                 </div>
               )}
               {project.shoot_date && (
                 <div>
-                  <span className="font-medium">Shoot Date:</span>{' '}
+                  <span className="font-medium">Shoot Date:</span>{" "}
                   {new Date(project.shoot_date).toLocaleDateString()}
                 </div>
               )}
@@ -168,7 +174,10 @@ export const ProjectDetail: React.FC = () => {
                     className="input-field mt-1"
                     value={newShotlist.shooting_date}
                     onChange={(e) =>
-                      setNewShotlist({ ...newShotlist, shooting_date: e.target.value })
+                      setNewShotlist({
+                        ...newShotlist,
+                        shooting_date: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -181,7 +190,10 @@ export const ProjectDetail: React.FC = () => {
                     className="input-field mt-1"
                     value={newShotlist.call_time}
                     onChange={(e) =>
-                      setNewShotlist({ ...newShotlist, call_time: e.target.value })
+                      setNewShotlist({
+                        ...newShotlist,
+                        call_time: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -194,7 +206,10 @@ export const ProjectDetail: React.FC = () => {
                     className="input-field mt-1"
                     value={newShotlist.wrap_time}
                     onChange={(e) =>
-                      setNewShotlist({ ...newShotlist, wrap_time: e.target.value })
+                      setNewShotlist({
+                        ...newShotlist,
+                        wrap_time: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -244,7 +259,9 @@ export const ProjectDetail: React.FC = () => {
         {/* Shotlists Grid */}
         {shotlists.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
-            <h3 className="text-sm font-medium text-gray-900">No shot lists yet</h3>
+            <h3 className="text-sm font-medium text-gray-900">
+              No shot lists yet
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
               Create your first shot list to start organizing your shots.
             </p>
@@ -261,8 +278,18 @@ export const ProjectDetail: React.FC = () => {
                     onClick={() => handleDeleteShotlist(shotlist.id)}
                     className="text-red-600 hover:text-red-800"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -270,18 +297,20 @@ export const ProjectDetail: React.FC = () => {
                 <div className="space-y-2 text-sm text-gray-600">
                   {shotlist.shooting_date && (
                     <div>
-                      <span className="font-medium">Date:</span>{' '}
+                      <span className="font-medium">Date:</span>{" "}
                       {new Date(shotlist.shooting_date).toLocaleDateString()}
                     </div>
                   )}
                   {shotlist.call_time && (
                     <div>
-                      <span className="font-medium">Call Time:</span> {shotlist.call_time}
+                      <span className="font-medium">Call Time:</span>{" "}
+                      {shotlist.call_time}
                     </div>
                   )}
                   {shotlist.location && (
                     <div>
-                      <span className="font-medium">Location:</span> {shotlist.location}
+                      <span className="font-medium">Location:</span>{" "}
+                      {shotlist.location}
                     </div>
                   )}
                   {shotlist.notes && (
@@ -294,8 +323,18 @@ export const ProjectDetail: React.FC = () => {
                   className="mt-4 inline-flex items-center text-primary-600 hover:text-primary-500"
                 >
                   View Details
-                  <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    className="ml-1 w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </Link>
               </div>

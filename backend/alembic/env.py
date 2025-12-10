@@ -18,10 +18,18 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from app.db.database import Base
-from app.models import user, project, shotlist, shotlist_item, client  # Import all models
+from app.models import (
+    user,
+    project,
+    shotlist,
+    shotlist_item,
+    client,
+)  # Import all models
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -43,6 +51,7 @@ def run_migrations_offline() -> None:
 
     """
     from app.core.config import settings
+
     url = settings.DATABASE_URL
     context.configure(
         url=url,
@@ -65,16 +74,14 @@ def run_migrations_online() -> None:
     # Use the DATABASE_URL from app settings instead of alembic.ini
     from app.core.config import settings
     from sqlalchemy import create_engine
-    
+
     connectable = create_engine(
         url=settings.DATABASE_URL,
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

@@ -1,11 +1,15 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { clientsService } from '../services/clients.service';
-import type { Client } from '../types';
-import { projectsService } from '../services/projects.service';
-import type { Project } from '../types';
-import { Button } from '@/components/ui/button';
-import { SortSelector, type SortOption, type SortOrder } from '@/components/ui/SortSelector';
+import React, { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { clientsService } from "../services/clients.service";
+import type { Client } from "../types";
+import { projectsService } from "../services/projects.service";
+import type { Project } from "../types";
+import { Button } from "@/components/ui/button";
+import {
+  SortSelector,
+  type SortOption,
+  type SortOrder,
+} from "@/components/ui/SortSelector";
 
 export const ClientDetail: React.FC = () => {
   const { clientId } = useParams<{ clientId: string }>();
@@ -14,9 +18,9 @@ export const ClientDetail: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [sortOption, setSortOption] = useState<SortOption>('date');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [newProjectName, setNewProjectName] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("date");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   useEffect(() => {
     if (!clientId) return;
@@ -25,16 +29,18 @@ export const ClientDetail: React.FC = () => {
       try {
         const [clientData, projectsData] = await Promise.all([
           clientsService.getById(clientId),
-          projectsService.getProjects()
+          projectsService.getProjects(),
         ]);
         setClient(clientData);
         // Filter projects for this client
-        const clientProjects = projectsData.filter(p => p.client_id === clientId);
+        const clientProjects = projectsData.filter(
+          (p) => p.client_id === clientId,
+        );
         setProjects(clientProjects);
       } catch (error: any) {
-        console.error('Failed to fetch client data:', error);
+        console.error("Failed to fetch client data:", error);
         if (error.response?.status === 404) {
-          navigate('/clients');
+          navigate("/clients");
         }
       } finally {
         setLoading(false);
@@ -54,12 +60,12 @@ export const ClientDetail: React.FC = () => {
         client_id: clientId,
       });
       setProjects([...projects, newProject]);
-      setNewProjectName('');
+      setNewProjectName("");
       setShowCreateForm(false);
       // Navigate directly to shotlist creator for the new project
       navigate(`/projects/${newProject.id}/shotlist`);
     } catch (error) {
-      console.error('Failed to create project:', error);
+      console.error("Failed to create project:", error);
     }
   };
 
@@ -73,17 +79,17 @@ export const ClientDetail: React.FC = () => {
   const sortedProjects = useMemo(() => {
     const sorted = [...projects];
 
-    if (sortOption === 'date') {
+    if (sortOption === "date") {
       sorted.sort((a, b) => {
         const dateA = new Date(a.created_at).getTime();
         const dateB = new Date(b.created_at).getTime();
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
       });
-    } else if (sortOption === 'name') {
+    } else if (sortOption === "name") {
       sorted.sort((a, b) => {
         const nameA = a.name.toLowerCase();
         const nameB = b.name.toLowerCase();
-        if (sortOrder === 'asc') {
+        if (sortOrder === "asc") {
           return nameA.localeCompare(nameB);
         } else {
           return nameB.localeCompare(nameA);
@@ -127,7 +133,7 @@ export const ClientDetail: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <Button
                     variant="ghost"
-                    onClick={() => navigate('/clients')}
+                    onClick={() => navigate("/clients")}
                     className="text-slate-300 hover:text-white"
                   >
                     ← Back
@@ -145,7 +151,7 @@ export const ClientDetail: React.FC = () => {
                   onClick={() => setShowCreateForm(!showCreateForm)}
                   className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white border-0 shadow-lg"
                 >
-                  {showCreateForm ? 'Cancel' : 'New Project'}
+                  {showCreateForm ? "Cancel" : "New Project"}
                 </Button>
               </div>
             </div>
@@ -210,7 +216,9 @@ export const ClientDetail: React.FC = () => {
                   {sortedProjects.map((project) => (
                     <div
                       key={project.id}
-                      onClick={() => navigate(`/projects/${project.id}/shotlist`)}
+                      onClick={() =>
+                        navigate(`/projects/${project.id}/shotlist`)
+                      }
                       className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/20 flex flex-col h-full hover:bg-white/10 transition-all duration-300 group cursor-pointer"
                     >
                       <div className="flex-1 space-y-3">
@@ -218,15 +226,19 @@ export const ClientDetail: React.FC = () => {
                           {project.name}
                         </h3>
                         {project.description && (
-                          <p className="text-slate-300">{project.description}</p>
+                          <p className="text-slate-300">
+                            {project.description}
+                          </p>
                         )}
                         {project.shoot_date && (
                           <p className="text-sm text-white font-medium">
-                            Shoot Date: {new Date(project.shoot_date).toLocaleDateString()}
+                            Shoot Date:{" "}
+                            {new Date(project.shoot_date).toLocaleDateString()}
                           </p>
                         )}
                         <p className="text-xs text-slate-400">
-                          Created: {new Date(project.created_at).toLocaleDateString()}
+                          Created:{" "}
+                          {new Date(project.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="mt-6 pt-4 border-t border-white/20">
@@ -245,4 +257,3 @@ export const ClientDetail: React.FC = () => {
     </div>
   );
 };
-
