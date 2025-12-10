@@ -1,0 +1,10 @@
+module.exports = {
+  api: {
+    input: "openapi.json",
+    output: {
+      target: "api.ts",
+      client: "axios",
+      hooks: true,
+    },
+  },
+};
