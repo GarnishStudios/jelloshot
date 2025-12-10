@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import datetime, date, time
 from uuid import UUID
 
+
 class ShotlistBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     shooting_date: Optional[date] = None
@@ -11,8 +12,10 @@ class ShotlistBase(BaseModel):
     location: Optional[str] = Field(None, max_length=500)
     notes: Optional[str] = None
 
+
 class ShotlistCreate(ShotlistBase):
     pass
+
 
 class ShotlistUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
@@ -21,6 +24,7 @@ class ShotlistUpdate(BaseModel):
     wrap_time: Optional[time] = None
     location: Optional[str] = Field(None, max_length=500)
     notes: Optional[str] = None
+
 
 class ShotlistInDB(ShotlistBase):
     id: UUID
@@ -31,11 +35,15 @@ class ShotlistInDB(ShotlistBase):
     class Config:
         from_attributes = True
 
+
 class Shotlist(ShotlistInDB):
     pass
+
 
 class ShotlistWithItems(Shotlist):
     items: List["ShotlistItem"] = []
 
+
 from app.schemas.shotlist_item import ShotlistItem
+
 ShotlistWithItems.model_rebuild()

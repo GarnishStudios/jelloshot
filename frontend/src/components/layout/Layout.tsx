@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores/authStore';
-import { ThemeSwitcher } from '../ui/ThemeSwitcher';
-import { Button } from '../ui/button';
+import React from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { ThemeSwitcher } from "../ui/ThemeSwitcher";
+import { Button } from "../ui/button";
 
 export const Layout: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -10,7 +10,7 @@ export const Layout: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (

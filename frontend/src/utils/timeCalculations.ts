@@ -1,24 +1,24 @@
 export function parseTime(timeString: string): Date {
-  const [hours, minutes] = timeString.split(':').map(Number);
+  const [hours, minutes] = timeString.split(":").map(Number);
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
   return date;
 }
 
 export function formatTime(date: Date): string {
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 }
 
 export function formatTimeTo12Hour(timeString: string): string {
-  if (!timeString) return '--:--';
+  if (!timeString) return "--:--";
 
-  const [hours, minutes] = timeString.split(':').map(Number);
-  const period = hours >= 12 ? 'PM' : 'AM';
+  const [hours, minutes] = timeString.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
   const displayHours = hours % 12 || 12;
 
-  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 }
 
 export function addMinutes(date: Date, minutes: number): Date {
@@ -27,20 +27,24 @@ export function addMinutes(date: Date, minutes: number): Date {
   return newDate;
 }
 
-export function calculateEndTime(startTime: string, durationMinutes: number): string {
+export function calculateEndTime(
+  startTime: string,
+  durationMinutes: number,
+): string {
   const start = parseTime(startTime);
   const end = addMinutes(start, durationMinutes);
   return formatTime(end);
 }
 
-export function calculateTotalDuration(items: { shot_duration: number }[]): number {
+export function calculateTotalDuration(
+  items: { shot_duration: number }[],
+): number {
   return items.reduce((total, item) => total + item.shot_duration, 0);
 }
 
-export function recalculateStartTimes<T extends { shot_duration: number; order_index: number }>(
-  items: T[],
-  callTime: string
-): (T & { start_time: string })[] {
+export function recalculateStartTimes<
+  T extends { shot_duration: number; order_index: number },
+>(items: T[], callTime: string): (T & { start_time: string })[] {
   let currentTime = parseTime(callTime);
 
   return items
@@ -52,7 +56,7 @@ export function recalculateStartTimes<T extends { shot_duration: number; order_i
       return {
         ...item,
         start_time: startTime,
-        order_index: index
+        order_index: index,
       };
     });
 }
@@ -70,16 +74,26 @@ export function formatDuration(minutes: number): string {
   }
 }
 
-export function getTimeDifferenceMinutes(startTime: string, endTime: string): number {
+export function getTimeDifferenceMinutes(
+  startTime: string,
+  endTime: string,
+): number {
   const start = parseTime(startTime);
   const end = parseTime(endTime);
   return Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
-export function recalculateStartTimesWithBoundaries<T extends { shot_duration: number; order_index: number; duration_locked?: boolean; id: string }>(
+export function recalculateStartTimesWithBoundaries<
+  T extends {
+    shot_duration: number;
+    order_index: number;
+    duration_locked?: boolean;
+    id: string;
+  },
+>(
   items: T[],
   startTime: string,
-  endTime: string
+  endTime: string,
 ): (T & { start_time: string; shot_duration: number })[] {
   if (items.length === 0) return [];
 
@@ -92,32 +106,41 @@ export function recalculateStartTimesWithBoundaries<T extends { shot_duration: n
       ...item,
       start_time: startTime,
       shot_duration: 1,
-      order_index: index
+      order_index: index,
     }));
   }
 
   // Separate locked and unlocked shots
-  const lockedShots = sortedItems.filter(item => item.duration_locked);
-  const unlockedShots = sortedItems.filter(item => !item.duration_locked);
+  const lockedShots = sortedItems.filter((item) => item.duration_locked);
+  const unlockedShots = sortedItems.filter((item) => !item.duration_locked);
 
   // Calculate time used by locked shots
-  const timeUsedByLockedShots = lockedShots.reduce((total, item) => total + item.shot_duration, 0);
+  const timeUsedByLockedShots = lockedShots.reduce(
+    (total, item) => total + item.shot_duration,
+    0,
+  );
 
   // Calculate remaining time for unlocked shots
-  const remainingTime = Math.max(0, totalAvailableMinutes - timeUsedByLockedShots);
+  const remainingTime = Math.max(
+    0,
+    totalAvailableMinutes - timeUsedByLockedShots,
+  );
 
   // If there are unlocked shots, distribute remaining time among them
   const unlockedShotsCount = unlockedShots.length;
   const adjustedDurations: Map<string, number> = new Map();
 
   // Set durations for locked shots (keep unchanged)
-  lockedShots.forEach(item => {
+  lockedShots.forEach((item) => {
     adjustedDurations.set(item.id, item.shot_duration);
   });
 
   // Distribute remaining time among unlocked shots
   if (unlockedShotsCount > 0) {
-    const baseTimePerUnlockedShot = Math.max(1, Math.floor(remainingTime / unlockedShotsCount));
+    const baseTimePerUnlockedShot = Math.max(
+      1,
+      Math.floor(remainingTime / unlockedShotsCount),
+    );
     const remainderTime = remainingTime % unlockedShotsCount;
 
     unlockedShots.forEach((item, index) => {
@@ -138,7 +161,7 @@ export function recalculateStartTimesWithBoundaries<T extends { shot_duration: n
       ...item,
       start_time: startTimeStr,
       shot_duration: finalDuration,
-      order_index: index
+      order_index: index,
     });
 
     // Move to next shot's start time
@@ -148,12 +171,14 @@ export function recalculateStartTimesWithBoundaries<T extends { shot_duration: n
   return results;
 }
 
-export function recalculateWithManualDuration<T extends { shot_duration: number; order_index: number; id: string }>(
+export function recalculateWithManualDuration<
+  T extends { shot_duration: number; order_index: number; id: string },
+>(
   items: T[],
   changedItemId: string,
   newDuration: number,
   startTime: string,
-  endTime: string
+  endTime: string,
 ): (T & { start_time: string; shot_duration: number })[] {
   if (items.length === 0) return [];
 
@@ -165,12 +190,14 @@ export function recalculateWithManualDuration<T extends { shot_duration: number;
       ...item,
       start_time: startTime,
       shot_duration: 1,
-      order_index: index
+      order_index: index,
     }));
   }
 
   // Find the item that was manually changed
-  const changedItemIndex = sortedItems.findIndex(item => item.id === changedItemId);
+  const changedItemIndex = sortedItems.findIndex(
+    (item) => item.id === changedItemId,
+  );
 
   if (changedItemIndex === -1) {
     // If the changed item isn't found, fall back to regular distribution
@@ -178,7 +205,10 @@ export function recalculateWithManualDuration<T extends { shot_duration: number;
   }
 
   // Ensure the new duration doesn't exceed total available time
-  const maxAllowedDuration = Math.max(1, totalAvailableMinutes - (sortedItems.length - 1)); // Leave at least 1 minute for other shots
+  const maxAllowedDuration = Math.max(
+    1,
+    totalAvailableMinutes - (sortedItems.length - 1),
+  ); // Leave at least 1 minute for other shots
   const constrainedNewDuration = Math.min(newDuration, maxAllowedDuration);
 
   // Calculate remaining time after the manually set duration
@@ -222,7 +252,7 @@ export function recalculateWithManualDuration<T extends { shot_duration: number;
       ...item,
       start_time: startTimeStr,
       shot_duration: duration,
-      order_index: index
+      order_index: index,
     });
 
     currentTime = addMinutes(currentTime, duration);
@@ -231,12 +261,14 @@ export function recalculateWithManualDuration<T extends { shot_duration: number;
   return results;
 }
 
-export function recalculateWithLastShotAdjustment<T extends { shot_duration: number; order_index: number; id: string }>(
+export function recalculateWithLastShotAdjustment<
+  T extends { shot_duration: number; order_index: number; id: string },
+>(
   items: T[],
   changedItemId: string,
   newDuration: number,
   startTime: string,
-  endTime: string
+  endTime: string,
 ): (T & { start_time: string; shot_duration: number })[] {
   if (items.length === 0) return [];
 
@@ -248,12 +280,14 @@ export function recalculateWithLastShotAdjustment<T extends { shot_duration: num
       ...item,
       start_time: startTime,
       shot_duration: 1,
-      order_index: index
+      order_index: index,
     }));
   }
 
   // Find the item that was manually changed
-  const changedItemIndex = sortedItems.findIndex(item => item.id === changedItemId);
+  const changedItemIndex = sortedItems.findIndex(
+    (item) => item.id === changedItemId,
+  );
 
   if (changedItemIndex === -1) {
     // If the changed item isn't found, fall back to regular distribution
@@ -261,13 +295,16 @@ export function recalculateWithLastShotAdjustment<T extends { shot_duration: num
   }
 
   // Update the changed item's duration
-  const updatedItems = sortedItems.map(item =>
-    item.id === changedItemId ? { ...item, shot_duration: newDuration } : item
+  const updatedItems = sortedItems.map((item) =>
+    item.id === changedItemId ? { ...item, shot_duration: newDuration } : item,
   );
 
   // Calculate total duration of all shots except the last one
   const allExceptLast = updatedItems.slice(0, -1);
-  const totalUsedTime = allExceptLast.reduce((total, item) => total + item.shot_duration, 0);
+  const totalUsedTime = allExceptLast.reduce(
+    (total, item) => total + item.shot_duration,
+    0,
+  );
 
   // Calculate remaining time for the last shot
   const remainingTime = Math.max(1, totalAvailableMinutes - totalUsedTime);
@@ -276,7 +313,7 @@ export function recalculateWithLastShotAdjustment<T extends { shot_duration: num
   const finalItems = updatedItems.map((item, index) =>
     index === updatedItems.length - 1
       ? { ...item, shot_duration: remainingTime }
-      : item
+      : item,
   );
 
   // Calculate start times based on final durations
@@ -290,7 +327,7 @@ export function recalculateWithLastShotAdjustment<T extends { shot_duration: num
       ...item,
       start_time: startTimeStr,
       shot_duration: item.shot_duration,
-      order_index: index
+      order_index: index,
     });
 
     currentTime = addMinutes(currentTime, item.shot_duration);
@@ -299,12 +336,19 @@ export function recalculateWithLastShotAdjustment<T extends { shot_duration: num
   return results;
 }
 
-export function recalculateWithShotBelowDistribution<T extends { shot_duration: number; order_index: number; id: string; duration_locked?: boolean }>(
+export function recalculateWithShotBelowDistribution<
+  T extends {
+    shot_duration: number;
+    order_index: number;
+    id: string;
+    duration_locked?: boolean;
+  },
+>(
   items: T[],
   changedItemId: string,
   newDuration: number,
   startTime: string,
-  endTime: string
+  endTime: string,
 ): (T & { start_time: string; shot_duration: number })[] {
   if (items.length === 0) return [];
 
@@ -316,12 +360,14 @@ export function recalculateWithShotBelowDistribution<T extends { shot_duration: 
       ...item,
       start_time: startTime,
       shot_duration: 1,
-      order_index: index
+      order_index: index,
     }));
   }
 
   // Find the item that was manually changed
-  const changedItemIndex = sortedItems.findIndex(item => item.id === changedItemId);
+  const changedItemIndex = sortedItems.findIndex(
+    (item) => item.id === changedItemId,
+  );
 
   if (changedItemIndex === -1) {
     // If the changed item isn't found, fall back to regular distribution
@@ -334,25 +380,35 @@ export function recalculateWithShotBelowDistribution<T extends { shot_duration: 
   const shotsBelow = sortedItems.slice(changedItemIndex + 1);
 
   // Calculate time used by shots above (keep their durations unchanged)
-  const timeUsedAbove = shotsAbove.reduce((total, item) => total + item.shot_duration, 0);
+  const timeUsedAbove = shotsAbove.reduce(
+    (total, item) => total + item.shot_duration,
+    0,
+  );
 
   // Add the new duration for the changed shot
   const timeUsedUpToChanged = timeUsedAbove + newDuration;
 
   // Calculate time used by locked shots below
-  const lockedShotsBelow = shotsBelow.filter(item => item.duration_locked);
-  const unlockedShotsBelow = shotsBelow.filter(item => !item.duration_locked);
-  const timeUsedByLockedShots = lockedShotsBelow.reduce((total, item) => total + item.shot_duration, 0);
+  const lockedShotsBelow = shotsBelow.filter((item) => item.duration_locked);
+  const unlockedShotsBelow = shotsBelow.filter((item) => !item.duration_locked);
+  const timeUsedByLockedShots = lockedShotsBelow.reduce(
+    (total, item) => total + item.shot_duration,
+    0,
+  );
 
   // Calculate remaining time for unlocked shots below
-  const remainingTime = totalAvailableMinutes - timeUsedUpToChanged - timeUsedByLockedShots;
+  const remainingTime =
+    totalAvailableMinutes - timeUsedUpToChanged - timeUsedByLockedShots;
 
   // Distribute remaining time evenly among unlocked shots below
   const unlockedShotsBelowCount = unlockedShotsBelow.length;
   let distributedShotsBelow = shotsBelow;
 
   if (unlockedShotsBelowCount > 0 && remainingTime > 0) {
-    const timePerUnlockedShot = Math.max(1, Math.floor(remainingTime / unlockedShotsBelowCount));
+    const timePerUnlockedShot = Math.max(
+      1,
+      Math.floor(remainingTime / unlockedShotsBelowCount),
+    );
     const extraTime = remainingTime % unlockedShotsBelowCount;
 
     distributedShotsBelow = shotsBelow.map((item, _index) => {
@@ -361,18 +417,21 @@ export function recalculateWithShotBelowDistribution<T extends { shot_duration: 
         return item;
       } else {
         // Distribute time among unlocked shots
-        const unlockedIndex = unlockedShotsBelow.findIndex(unlocked => unlocked.id === item.id);
+        const unlockedIndex = unlockedShotsBelow.findIndex(
+          (unlocked) => unlocked.id === item.id,
+        );
         return {
           ...item,
-          shot_duration: timePerUnlockedShot + (unlockedIndex < extraTime ? 1 : 0)
+          shot_duration:
+            timePerUnlockedShot + (unlockedIndex < extraTime ? 1 : 0),
         };
       }
     });
   } else if (unlockedShotsBelowCount > 0) {
     // If no time remaining, give each unlocked shot below 1 minute
-    distributedShotsBelow = shotsBelow.map(item => ({
+    distributedShotsBelow = shotsBelow.map((item) => ({
       ...item,
-      shot_duration: item.duration_locked ? item.shot_duration : 1
+      shot_duration: item.duration_locked ? item.shot_duration : 1,
     }));
   }
 
@@ -380,7 +439,7 @@ export function recalculateWithShotBelowDistribution<T extends { shot_duration: 
   const finalItems = [
     ...shotsAbove, // Keep original durations
     { ...changedShot, shot_duration: newDuration }, // Changed shot
-    ...distributedShotsBelow // Redistributed shots below
+    ...distributedShotsBelow, // Redistributed shots below
   ];
 
   // Calculate start times based on final durations
@@ -394,7 +453,7 @@ export function recalculateWithShotBelowDistribution<T extends { shot_duration: 
       ...item,
       start_time: startTimeStr,
       shot_duration: item.shot_duration,
-      order_index: index
+      order_index: index,
     });
 
     currentTime = addMinutes(currentTime, item.shot_duration);

@@ -3,7 +3,12 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
 from app.db.database import get_db
-from app.schemas.shotlist_item import ShotlistItem, ShotlistItemCreate, ShotlistItemUpdate, ReorderRequest
+from app.schemas.shotlist_item import (
+    ShotlistItem,
+    ShotlistItemCreate,
+    ShotlistItemUpdate,
+    ReorderRequest,
+)
 from app.models.user import User
 from app.api.endpoints.auth import get_current_user
 from app.services import shotlist_items as shotlist_item_service
@@ -12,11 +17,12 @@ from app.services import projects as project_service
 
 router = APIRouter()
 
+
 @router.get("/shotlists/{shotlist_id}/items", response_model=List[ShotlistItem])
 def read_shotlist_items(
     shotlist_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:
@@ -24,17 +30,20 @@ def read_shotlist_items(
 
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to access this shotlist")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access this shotlist"
+        )
 
     items = shotlist_item_service.get_shotlist_items(db, shotlist_id=shotlist_id)
     return items
+
 
 @router.post("/shotlists/{shotlist_id}/items", response_model=ShotlistItem)
 def create_shotlist_item(
     shotlist_id: UUID,
     item: ShotlistItemCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:
@@ -42,15 +51,20 @@ def create_shotlist_item(
 
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to access this shotlist")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access this shotlist"
+        )
 
-    return shotlist_item_service.create_shotlist_item(db=db, item=item, shotlist_id=shotlist_id)
+    return shotlist_item_service.create_shotlist_item(
+        db=db, item=item, shotlist_id=shotlist_id
+    )
+
 
 @router.get("/shotlist-items/{item_id}", response_model=ShotlistItem)
 def read_shotlist_item(
     item_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
     if db_item is None:
@@ -59,16 +73,19 @@ def read_shotlist_item(
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to access this item")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access this item"
+        )
 
     return db_item
+
 
 @router.put("/shotlist-items/{item_id}", response_model=ShotlistItem)
 def update_shotlist_item(
     item_id: UUID,
     item: ShotlistItemUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
     if db_item is None:
@@ -77,15 +94,18 @@ def update_shotlist_item(
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this item")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this item"
+        )
 
     return shotlist_item_service.update_shotlist_item(db=db, item_id=item_id, item=item)
+
 
 @router.delete("/shotlist-items/{item_id}")
 def delete_shotlist_item(
     item_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
     if db_item is None:
@@ -94,17 +114,20 @@ def delete_shotlist_item(
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this item")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this item"
+        )
 
     shotlist_item_service.delete_shotlist_item(db=db, item_id=item_id)
     return {"detail": "Item deleted successfully"}
+
 
 @router.put("/shotlists/{shotlist_id}/items/reorder", response_model=List[ShotlistItem])
 def reorder_shotlist_items(
     shotlist_id: UUID,
     reorder_request: ReorderRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
     if db_shotlist is None:
@@ -112,22 +135,25 @@ def reorder_shotlist_items(
 
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to reorder items in this shotlist")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to reorder items in this shotlist"
+        )
 
     items = shotlist_item_service.reorder_shotlist_items(
         db=db,
         shotlist_id=shotlist_id,
         reorder_request=reorder_request,
-        call_time=db_shotlist.call_time
+        call_time=db_shotlist.call_time,
     )
     return items
+
 
 @router.post("/shotlist-items/{item_id}/upload-image")
 async def upload_image(
     item_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     import os
     import uuid
@@ -141,10 +167,12 @@ async def upload_image(
     db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
     db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
     if db_project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to upload image for this item")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to upload image for this item"
+        )
 
     # Validate file type
-    if not file.content_type.startswith('image/'):
+    if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
 
     # Read the uploaded file
@@ -155,8 +183,8 @@ async def upload_image(
         image = Image.open(io.BytesIO(contents))
 
         # Convert to RGB if necessary (handles PNG with transparency, etc.)
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
+        if image.mode != "RGB":
+            image = image.convert("RGB")
 
         # Determine target size based on original image aspect ratio
         original_width, original_height = image.size
@@ -174,7 +202,7 @@ async def upload_image(
         image.thumbnail(target_size, Image.Resampling.LANCZOS)
 
         # Create a new image with target size and white background
-        new_image = Image.new('RGB', target_size, (255, 255, 255))
+        new_image = Image.new("RGB", target_size, (255, 255, 255))
 
         # Calculate position to center the resized image
         x = (target_size[0] - image.size[0]) // 2
@@ -184,7 +212,7 @@ async def upload_image(
         new_image.paste(image, (x, y))
 
         # Generate unique filename
-        file_extension = '.jpg'  # Always save as JPG for consistency
+        file_extension = ".jpg"  # Always save as JPG for consistency
         unique_filename = f"{uuid.uuid4()}{file_extension}"
 
         # Ensure uploads directory exists
@@ -203,11 +231,10 @@ async def upload_image(
 
     # Update the item with the image URL
     from app.schemas.shotlist_item import ShotlistItemUpdate
+
     update_data = ShotlistItemUpdate(shot_reference_image=image_url)
     updated_item = shotlist_item_service.update_shotlist_item(
-        db=db,
-        item_id=item_id,
-        item=update_data
+        db=db, item_id=item_id, item=update_data
     )
 
     return {"url": image_url}

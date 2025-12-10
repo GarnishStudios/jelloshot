@@ -1,5 +1,5 @@
-import api from './api';
-import type { Client, Project } from '../types';
+import api from "./api";
+import type { Client, Project } from "../types";
 
 export interface ClientCreate {
   name: string;
@@ -13,7 +13,7 @@ export interface ClientUpdate {
 
 export const clientsService = {
   async getAll(): Promise<Client[]> {
-    const response = await api.get('/api/clients');
+    const response = await api.get("/api/clients");
     return response.data;
   },
 
@@ -23,7 +23,7 @@ export const clientsService = {
   },
 
   async create(client: ClientCreate): Promise<Client> {
-    const response = await api.post('/api/clients', client);
+    const response = await api.post("/api/clients", client);
     return response.data;
   },
 
@@ -36,5 +36,3 @@ export const clientsService = {
     await api.delete(`/api/clients/${id}`);
   },
 };
-
-
