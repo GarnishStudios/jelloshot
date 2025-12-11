@@ -13,12 +13,14 @@ import { Layout } from "./components/layout/Layout";
 import { Clients } from "./pages/Clients";
 import { ShotlistDetail } from "./pages/ShotlistDetail";
 import { ClientDetail } from "./pages/ClientDetail";
-import { Debug } from "./pages/Debug";
 import { PrivateRoute } from "./components/PrivateRoute";
+import axios from "axios";
 
 const queryClient = new QueryClient();
 
 function App() {
+  axios.defaults.withCredentials = true;
+
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const { mode } = useThemeStore();
 
@@ -40,7 +42,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          <Route path="/debug" element={<Debug />} />
           <Route path="/login" element={<LoginForm />} />
 
           <Route

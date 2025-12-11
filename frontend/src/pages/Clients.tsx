@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { clientsService } from "../services/clients.service";
-import type { Client } from "../types";
 import { Button } from "@/components/ui/button";
 import {
   SortSelector,
   type SortOption,
   type SortOrder,
 } from "@/components/ui/SortSelector";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { Client } from "@/type-gen/api";
 
 export const Clients: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
@@ -22,7 +22,7 @@ export const Clients: React.FC = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const data = await clientsService.getAll();
+        const { data } = await getCallSheetAPI().readClientsApiClientsGet();
         setClients(data);
       } catch (error: any) {
         console.error("Failed to fetch clients:", error);
@@ -45,10 +45,11 @@ export const Clients: React.FC = () => {
     if (!newClientName.trim()) return;
 
     try {
-      const newClient = await clientsService.create({
-        name: newClientName,
-        description: newClientDescription || undefined,
-      });
+      const { data: newClient } =
+        await getCallSheetAPI().createClientApiClientsPost({
+          name: newClientName,
+          description: newClientDescription || undefined,
+        });
       setClients([...clients, newClient]);
       setNewClientName("");
       setNewClientDescription("");

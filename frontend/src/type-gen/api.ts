@@ -66,6 +66,10 @@ export interface HTTPValidationError {
   detail?: ValidationError[];
 }
 
+export interface ImageResponse {
+  url: string;
+}
+
 export type ProjectDescription = string | null;
 
 export type ProjectProductionCompany = string | null;
@@ -301,8 +305,6 @@ export type ShotlistItemShotDescription = string | null;
 
 export type ShotlistItemTimeOfDay = string | null;
 
-export type ShotlistItemShotDuration = number | null;
-
 export type ShotlistItemStartTime = string | null;
 
 export type ShotlistItemNotes = string | null;
@@ -331,7 +333,11 @@ export interface ShotlistItem {
   shot_type?: ShotlistItemShotType;
   shot_description?: ShotlistItemShotDescription;
   time_of_day?: ShotlistItemTimeOfDay;
-  shot_duration?: ShotlistItemShotDuration;
+  /**
+   * @minimum 1
+   * @maximum 1440
+   */
+  shot_duration: number;
   start_time?: ShotlistItemStartTime;
   notes?: ShotlistItemNotes;
   shot_reference_image?: ShotlistItemShotReferenceImage;
@@ -510,6 +516,14 @@ export interface ShotlistWithItems {
   items?: ShotlistItem[];
 }
 
+export type UserFullName = string | null;
+
+export interface User {
+  id: string;
+  email: string;
+  full_name?: UserFullName;
+}
+
 export type ValidationErrorLocItem = string | number;
 
 export interface ValidationError {
@@ -541,7 +555,10 @@ export const getCallSheetAPI = () => {
   const loginGoogleApiAuthLoginGoogleGet = <TData = AxiosResponse<unknown>>(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/auth/login/google`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/auth/login/google`,
+      options,
+    );
   };
 
   /**
@@ -552,7 +569,10 @@ export const getCallSheetAPI = () => {
   >(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/auth/google/callback`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/auth/google/callback`,
+      options,
+    );
   };
 
   /**
@@ -561,16 +581,20 @@ export const getCallSheetAPI = () => {
   const logoutApiAuthLogoutPost = <TData = AxiosResponse<unknown>>(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.post(`/api/auth/logout`, undefined, options);
+    return axios.default.post(
+      `http://localhost:8000/api/auth/logout`,
+      undefined,
+      options,
+    );
   };
 
   /**
    * @summary Get Current User
    */
-  const getCurrentUserApiAuthMeGet = <TData = AxiosResponse<unknown>>(
+  const getCurrentUserApiAuthMeGet = <TData = AxiosResponse<User>>(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/auth/me`, options);
+    return axios.default.get(`http://localhost:8000/api/auth/me`, options);
   };
 
   /**
@@ -580,7 +604,7 @@ export const getCallSheetAPI = () => {
     params?: ReadClientsApiClientsGetParams,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/clients/`, {
+    return axios.default.get(`http://localhost:8000/api/clients/`, {
       ...options,
       params: { ...params, ...options?.params },
     });
@@ -593,7 +617,11 @@ export const getCallSheetAPI = () => {
     clientCreate: ClientCreate,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.post(`/api/clients/`, clientCreate, options);
+    return axios.default.post(
+      `http://localhost:8000/api/clients/`,
+      clientCreate,
+      options,
+    );
   };
 
   /**
@@ -605,7 +633,10 @@ export const getCallSheetAPI = () => {
     clientId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/clients/${clientId}`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/clients/${clientId}`,
+      options,
+    );
   };
 
   /**
@@ -616,7 +647,11 @@ export const getCallSheetAPI = () => {
     clientUpdate: ClientUpdate,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.put(`/api/clients/${clientId}`, clientUpdate, options);
+    return axios.default.put(
+      `http://localhost:8000/api/clients/${clientId}`,
+      clientUpdate,
+      options,
+    );
   };
 
   /**
@@ -626,7 +661,10 @@ export const getCallSheetAPI = () => {
     clientId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.delete(`/api/clients/${clientId}`, options);
+    return axios.default.delete(
+      `http://localhost:8000/api/clients/${clientId}`,
+      options,
+    );
   };
 
   /**
@@ -636,7 +674,7 @@ export const getCallSheetAPI = () => {
     params?: ReadProjectsApiProjectsGetParams,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/projects/`, {
+    return axios.default.get(`http://localhost:8000/api/projects/`, {
       ...options,
       params: { ...params, ...options?.params },
     });
@@ -649,7 +687,11 @@ export const getCallSheetAPI = () => {
     projectCreate: ProjectCreate,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.post(`/api/projects/`, projectCreate, options);
+    return axios.default.post(
+      `http://localhost:8000/api/projects/`,
+      projectCreate,
+      options,
+    );
   };
 
   /**
@@ -661,7 +703,10 @@ export const getCallSheetAPI = () => {
     projectId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/projects/${projectId}`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/projects/${projectId}`,
+      options,
+    );
   };
 
   /**
@@ -673,7 +718,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.put(
-      `/api/projects/${projectId}`,
+      `http://localhost:8000/api/projects/${projectId}`,
       projectUpdate,
       options,
     );
@@ -688,7 +733,10 @@ export const getCallSheetAPI = () => {
     projectId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.delete(`/api/projects/${projectId}`, options);
+    return axios.default.delete(
+      `http://localhost:8000/api/projects/${projectId}`,
+      options,
+    );
   };
 
   /**
@@ -701,10 +749,13 @@ export const getCallSheetAPI = () => {
     params?: ReadShotlistsApiProjectsProjectIdShotlistsGetParams,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/projects/${projectId}/shotlists`, {
-      ...options,
-      params: { ...params, ...options?.params },
-    });
+    return axios.default.get(
+      `http://localhost:8000/api/projects/${projectId}/shotlists`,
+      {
+        ...options,
+        params: { ...params, ...options?.params },
+      },
+    );
   };
 
   /**
@@ -718,7 +769,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.post(
-      `/api/projects/${projectId}/shotlists`,
+      `http://localhost:8000/api/projects/${projectId}/shotlists`,
       shotlistCreate,
       options,
     );
@@ -733,7 +784,10 @@ export const getCallSheetAPI = () => {
     shotlistId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/shotlists/${shotlistId}`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/shotlists/${shotlistId}`,
+      options,
+    );
   };
 
   /**
@@ -747,7 +801,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.put(
-      `/api/shotlists/${shotlistId}`,
+      `http://localhost:8000/api/shotlists/${shotlistId}`,
       shotlistUpdate,
       options,
     );
@@ -762,7 +816,10 @@ export const getCallSheetAPI = () => {
     shotlistId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.delete(`/api/shotlists/${shotlistId}`, options);
+    return axios.default.delete(
+      `http://localhost:8000/api/shotlists/${shotlistId}`,
+      options,
+    );
   };
 
   /**
@@ -774,7 +831,10 @@ export const getCallSheetAPI = () => {
     shotlistId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/shotlists/${shotlistId}/items`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/shotlists/${shotlistId}/items`,
+      options,
+    );
   };
 
   /**
@@ -788,7 +848,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.post(
-      `/api/shotlists/${shotlistId}/items`,
+      `http://localhost:8000/api/shotlists/${shotlistId}/items`,
       shotlistItemCreate,
       options,
     );
@@ -803,7 +863,10 @@ export const getCallSheetAPI = () => {
     itemId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/api/shotlist-items/${itemId}`, options);
+    return axios.default.get(
+      `http://localhost:8000/api/shotlist-items/${itemId}`,
+      options,
+    );
   };
 
   /**
@@ -817,7 +880,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.put(
-      `/api/shotlist-items/${itemId}`,
+      `http://localhost:8000/api/shotlist-items/${itemId}`,
       shotlistItemUpdate,
       options,
     );
@@ -832,7 +895,10 @@ export const getCallSheetAPI = () => {
     itemId: string,
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.delete(`/api/shotlist-items/${itemId}`, options);
+    return axios.default.delete(
+      `http://localhost:8000/api/shotlist-items/${itemId}`,
+      options,
+    );
   };
 
   /**
@@ -846,7 +912,7 @@ export const getCallSheetAPI = () => {
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
     return axios.default.put(
-      `/api/shotlists/${shotlistId}/items/reorder`,
+      `http://localhost:8000/api/shotlists/${shotlistId}/items/reorder`,
       reorderRequest,
       options,
     );
@@ -856,7 +922,7 @@ export const getCallSheetAPI = () => {
    * @summary Upload Image
    */
   const uploadImageApiShotlistItemsItemIdUploadImagePost = <
-    TData = AxiosResponse<unknown>,
+    TData = AxiosResponse<ImageResponse>,
   >(
     itemId: string,
     bodyUploadImageApiShotlistItemsItemIdUploadImagePost: BodyUploadImageApiShotlistItemsItemIdUploadImagePost,
@@ -869,7 +935,7 @@ export const getCallSheetAPI = () => {
     );
 
     return axios.default.post(
-      `/api/shotlist-items/${itemId}/upload-image`,
+      `http://localhost:8000/api/shotlist-items/${itemId}/upload-image`,
       formData,
       options,
     );
@@ -881,7 +947,7 @@ export const getCallSheetAPI = () => {
   const readRootGet = <TData = AxiosResponse<unknown>>(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/`, options);
+    return axios.default.get(`http://localhost:8000/`, options);
   };
 
   /**
@@ -890,7 +956,7 @@ export const getCallSheetAPI = () => {
   const healthCheckHealthGet = <TData = AxiosResponse<unknown>>(
     options?: AxiosRequestConfig,
   ): Promise<TData> => {
-    return axios.default.get(`/health`, options);
+    return axios.default.get(`http://localhost:8000/health`, options);
   };
 
   return {
@@ -928,7 +994,7 @@ export type LoginGoogleApiAuthLoginGoogleGetResult = AxiosResponse<unknown>;
 export type AuthGoogleCallbackApiAuthGoogleCallbackGetResult =
   AxiosResponse<unknown>;
 export type LogoutApiAuthLogoutPostResult = AxiosResponse<unknown>;
-export type GetCurrentUserApiAuthMeGetResult = AxiosResponse<unknown>;
+export type GetCurrentUserApiAuthMeGetResult = AxiosResponse<User>;
 export type ReadClientsApiClientsGetResult = AxiosResponse<Client[]>;
 export type CreateClientApiClientsPostResult = AxiosResponse<Client>;
 export type ReadClientApiClientsClientIdGetResult =
@@ -966,6 +1032,6 @@ export type DeleteShotlistItemApiShotlistItemsItemIdDeleteResult =
 export type ReorderShotlistItemsApiShotlistsShotlistIdItemsReorderPutResult =
   AxiosResponse<ShotlistItem[]>;
 export type UploadImageApiShotlistItemsItemIdUploadImagePostResult =
-  AxiosResponse<unknown>;
+  AxiosResponse<ImageResponse>;
 export type ReadRootGetResult = AxiosResponse<unknown>;
 export type HealthCheckHealthGetResult = AxiosResponse<unknown>;

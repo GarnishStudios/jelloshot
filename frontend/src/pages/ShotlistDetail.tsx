@@ -25,17 +25,6 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type {
-  Shotlist,
-  ShotlistItem,
-  CrewMember,
-  ClientMember,
-  Project,
-} from "../types";
-import { shotlistItemsService } from "../services/shotlist-items.service";
-import { shotlistsService } from "../services/shotlists.service";
-import { projectsService } from "../services/projects.service";
-import { crewService } from "../services/crew.service";
 import {
   formatDuration,
   recalculateStartTimes,
@@ -45,8 +34,6 @@ import {
 } from "../utils/timeCalculations";
 import { ShotlistItemCard } from "../components/shotlist-items/ShotlistItemCard";
 import { ProjectDetailsSection } from "../components/project/ProjectDetailsSection";
-import { CrewSection } from "../components/project/CrewSection";
-import { ClientSection } from "../components/project/ClientSection";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -57,6 +44,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { Shotlist, ShotlistItem, Project } from "@/type-gen/api";
 
 export const ShotlistDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,8 +63,6 @@ export const ShotlistDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [project, setProject] = useState<Project | null>(null);
-  const [crewMembers, setCrewMembers] = useState<CrewMember[]>([]);
-  const [clientMembers, setClientMembers] = useState<ClientMember[]>([]);
   const [lastManuallyChangedItem, setLastManuallyChangedItem] = useState<{
     itemId: string;
     duration: number;
@@ -85,75 +72,6 @@ export const ShotlistDetail: React.FC = () => {
     if (project) {
       setProject({ ...project, ...updates });
     }
-  };
-
-  const handleAddCrewMember = (memberData: Partial<CrewMember>) => {
-    // Create a temporary crew member with local ID since backend doesn't exist yet
-    const newMember: CrewMember = {
-      id: Date.now().toString(), // Temporary ID
-      project_id: project?.id || "",
-      name: memberData.name || "",
-      role: memberData.role || "",
-      email: memberData.email || "",
-      phone: memberData.phone || "",
-      call_time: memberData.call_time || "",
-      allergies: memberData.allergies || "",
-      notes: memberData.notes || "",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    setCrewMembers([...crewMembers, newMember]);
-  };
-
-  const handleUpdateCrewMember = (id: string, updates: Partial<CrewMember>) => {
-    setCrewMembers(
-      crewMembers.map((member) =>
-        member.id === id
-          ? { ...member, ...updates, updated_at: new Date().toISOString() }
-          : member,
-      ),
-    );
-  };
-
-  const handleDeleteCrewMember = (id: string) => {
-    setCrewMembers(crewMembers.filter((member) => member.id !== id));
-  };
-
-  const handleAddClientMember = (memberData: Partial<ClientMember>) => {
-    // Create a temporary client member with local ID since backend doesn't exist yet
-    const newMember: ClientMember = {
-      id: Date.now().toString(), // Temporary ID
-      project_id: project?.id || "",
-      name: memberData.name || "",
-      company: memberData.company || "",
-      email: memberData.email || "",
-      phone: memberData.phone || "",
-      call_time: memberData.call_time || "",
-      allergies: memberData.allergies || "",
-      notes: memberData.notes || "",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    setClientMembers([...clientMembers, newMember]);
-  };
-
-  const handleUpdateClientMember = (
-    id: string,
-    updates: Partial<ClientMember>,
-  ) => {
-    setClientMembers(
-      clientMembers.map((member) =>
-        member.id === id
-          ? { ...member, ...updates, updated_at: new Date().toISOString() }
-          : member,
-      ),
-    );
-  };
-
-  const handleDeleteClientMember = (id: string) => {
-    setClientMembers(clientMembers.filter((member) => member.id !== id));
   };
 
   const sensors = useSensors(
@@ -171,37 +89,38 @@ export const ShotlistDetail: React.FC = () => {
       setError(null);
 
       // Get project shotlists to find the right shotlist
-      const shotlists = await shotlistsService.getProjectShotlists(id);
+      const { data: shotlists } =
+        await getCallSheetAPI().readShotlistsApiProjectsProjectIdShotlistsGet(
+          id,
+        );
       let currentShotlist = shotlists[0]; // Try to get the first shotlist
 
       // If no shotlist exists, create a default one
       if (!currentShotlist) {
-        currentShotlist = await shotlistsService.createShotlist(id, {
-          name: "Main Shotlist",
-          notes: "Primary shot list for this project",
-        });
+        const { data: shotlist } =
+          await getCallSheetAPI().createShotlistApiProjectsProjectIdShotlistsPost(
+            id,
+            {
+              name: "Main Shotlist",
+              notes: "Primary shot list for this project",
+            },
+          );
+        currentShotlist = shotlist;
       }
 
       setShotlist(currentShotlist);
 
       // Load shotlist items
-      const items = await shotlistItemsService.getShotlistItems(
-        currentShotlist.id,
-      );
+      const { data: items } =
+        await getCallSheetAPI().readShotlistItemsApiShotlistsShotlistIdItemsGet(
+          currentShotlist.id,
+        );
       setShotlistItems(items);
 
       // Load project details
-      const projectData = await projectsService.getProject(id);
+      const { data: projectData } =
+        await getCallSheetAPI().readProjectApiProjectsProjectIdGet(id);
       setProject(projectData);
-
-      // Load crew members (optional - backend might not have this endpoint yet)
-      try {
-        const crew = await crewService.getProjectCrew(id);
-        setCrewMembers(crew);
-      } catch (crewError) {
-        console.warn("Crew endpoint not available yet:", crewError);
-        setCrewMembers([]); // Set empty array if crew endpoint doesn't exist
-      }
     } catch (err: any) {
       console.error("Failed to load shotlist data:", err);
       const errorMessage =
@@ -293,10 +212,18 @@ export const ShotlistDetail: React.FC = () => {
       setShotlistItems(newItems);
 
       try {
-        const reorderedItems = await shotlistItemsService.reorderItems(
-          shotlist.id,
-          newItems.map((item) => item.id),
-        );
+        const { data: reorderedItems } =
+          await getCallSheetAPI().reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut(
+            shotlist.id,
+            {
+              items: newItems.map((item, new_index) => {
+                return {
+                  item_id: item.id,
+                  new_index,
+                };
+              }),
+            },
+          );
         setShotlistItems(reorderedItems);
       } catch (error) {
         console.error("Failed to reorder items:", error);
@@ -312,11 +239,14 @@ export const ShotlistDetail: React.FC = () => {
     }
 
     try {
-      const newItem = await shotlistItemsService.createItem(shotlist.id, {
-        shot_name: `Shot ${shotlistItems.length + 1}`,
-        shot_duration: 10,
-        order_index: shotlistItems.length,
-      });
+      const { data: newItem } =
+        await getCallSheetAPI().createShotlistItemApiShotlistsShotlistIdItemsPost(
+          shotlist.id,
+          {
+            shot_name: `Shot ${shotlistItems.length + 1}`,
+            shot_duration: 10,
+          },
+        );
 
       setShotlistItems([...shotlistItems, newItem]);
     } catch (error) {
@@ -332,12 +262,15 @@ export const ShotlistDetail: React.FC = () => {
     if (!shotlist) return;
 
     try {
-      const newItem = await shotlistItemsService.createItem(shotlist.id, {
-        shot_name: "Lunch Break",
-        shot_type: "Lunch",
-        shot_duration: 60, // Default 1 hour lunch break
-        order_index: shotlistItems.length,
-      });
+      const { data: newItem } =
+        await getCallSheetAPI().createShotlistItemApiShotlistsShotlistIdItemsPost(
+          shotlist.id,
+          {
+            shot_name: "Lunch Break",
+            shot_type: "Lunch",
+            shot_duration: 60, // Default 1 hour lunch break
+          },
+        );
       setShotlistItems([...shotlistItems, newItem]);
     } catch (error) {
       console.error("Failed to create lunch break:", error);
@@ -361,7 +294,11 @@ export const ShotlistDetail: React.FC = () => {
         });
       }
 
-      const updatedItem = await shotlistItemsService.updateItem(id, updates);
+      const { data: updatedItem } =
+        await getCallSheetAPI().updateShotlistItemApiShotlistItemsItemIdPut(
+          id,
+          updates,
+        );
       setShotlistItems((items) =>
         items.map((item) => (item.id === id ? updatedItem : item)),
       );
@@ -387,7 +324,7 @@ export const ShotlistDetail: React.FC = () => {
       );
 
       // Update the backend with both duration and lock status
-      await shotlistItemsService.updateItem(id, {
+      await getCallSheetAPI().updateShotlistItemApiShotlistItemsItemIdPut(id, {
         shot_duration: newDuration,
         duration_locked: true,
       });
@@ -405,7 +342,7 @@ export const ShotlistDetail: React.FC = () => {
     try {
       // Update each item's duration in the backend
       const updatePromises = itemsWithNewDurations.map((item) =>
-        shotlistItemsService.updateItem(item.id, {
+        getCallSheetAPI().updateShotlistItemApiShotlistItemsItemIdPut(item.id, {
           shot_duration: item.shot_duration,
         }),
       );
@@ -421,7 +358,9 @@ export const ShotlistDetail: React.FC = () => {
 
   const handleDeleteItem = async (id: string) => {
     try {
-      await shotlistItemsService.deleteItem(id);
+      await getCallSheetAPI().deleteShotlistItemApiShotlistItemsItemIdDelete(
+        id,
+      );
       setShotlistItems((items) => items.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Failed to delete item:", error);
@@ -445,9 +384,12 @@ export const ShotlistDetail: React.FC = () => {
           ...currentProperties,
           [propertyKey]: "",
         };
-        return shotlistItemsService.updateItem(item.id, {
-          custom_properties: updatedProperties,
-        });
+        return getCallSheetAPI().updateShotlistItemApiShotlistItemsItemIdPut(
+          item.id,
+          {
+            custom_properties: updatedProperties,
+          },
+        );
       });
 
       await Promise.all(updatePromises);
@@ -608,22 +550,6 @@ export const ShotlistDetail: React.FC = () => {
               onTimeChange={handleTimeChange}
             />
           )}
-
-          {/* Crew Section */}
-          <CrewSection
-            crewMembers={crewMembers}
-            onAddMember={handleAddCrewMember}
-            onUpdateMember={handleUpdateCrewMember}
-            onDeleteMember={handleDeleteCrewMember}
-          />
-
-          {/* Client Section */}
-          <ClientSection
-            clientMembers={clientMembers}
-            onAddMember={handleAddClientMember}
-            onUpdateMember={handleUpdateClientMember}
-            onDeleteMember={handleDeleteClientMember}
-          />
 
           {/* Main Layout - Split into left shot list and right sidebar */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -10,12 +10,10 @@ import {
   Lock,
   Unlock,
 } from "lucide-react";
-import type { ShotlistItem } from "../../types";
 import {
   calculateEndTime,
   formatTimeTo12Hour,
 } from "../../utils/timeCalculations";
-import { shotlistItemsService } from "../../services/shotlist-items.service";
 import { InlineEdit } from "../ui/InlineEdit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { ShotlistItem } from "@/type-gen/api";
 
 interface ShotlistItemCardProps {
   item: ShotlistItem;
@@ -89,7 +89,11 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
 
     setUploadingImage(true);
     try {
-      const response = await shotlistItemsService.uploadImage(item.id, file);
+      const { data: response } =
+        await getCallSheetAPI().uploadImageApiShotlistItemsItemIdUploadImagePost(
+          item.id,
+          { file },
+        );
       onUpdate(item.id, { shot_reference_image: response.url });
     } catch (error) {
       console.error("Failed to upload image:", error);

@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { authService, type User } from "../services/auth";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { User } from "@/type-gen/api";
 
 interface AuthState {
   user: User | null;
@@ -17,7 +18,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   error: null,
 
   logout: async () => {
-    await authService.logout();
+    await getCallSheetAPI().logoutApiAuthLogoutPost();
     set({ user: null, isAuthenticated: false, isLoading: false });
   },
 
@@ -25,7 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     // Always try to fetch the user to verify the session cookie
     try {
       set({ isLoading: true });
-      const user = await authService.getCurrentUser();
+      const { data: user } =
+        await getCallSheetAPI().getCurrentUserApiAuthMeGet();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       // If fetching user fails (e.g. 401), we are not authenticated

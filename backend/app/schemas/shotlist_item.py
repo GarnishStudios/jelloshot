@@ -11,7 +11,7 @@ class ShotlistItemBase(BaseModel):
     time_of_day: Optional[str] = Field(
         None, pattern="^(dawn|morning|afternoon|evening|night)$"
     )
-    shot_duration: Optional[int] = Field(None, ge=1, le=1440)  # 1 minute to 24 hours
+    shot_duration: int = Field(ge=1, le=1440)  # 1 minute to 24 hours
     start_time: Optional[time] = None
     notes: Optional[str] = None
     shot_reference_image: Optional[str] = None

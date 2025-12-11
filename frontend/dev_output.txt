@@ -1,9 +1,0 @@
-
-> frontend@0.0.0 dev
-> vite --host 0.0.0.0 --port 3000
-
-
-  VITE v7.1.6  ready in 101 ms
-
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://192.168.1.36:3000/
