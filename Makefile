@@ -16,17 +16,17 @@ generate-types: openapi copy orval
 
 openapi:
 	@echo "=== Starting OpenAPI JSON generation ==="
-	@docker-compose run --rm backend python -m scripts.generate_openapi >/dev/null 2>&1
+	@docker-compose run --rm backend python -m scripts.generate_openapi
 	@echo "=== Finished generating openapi.json ==="
 
 copy: openapi
 	@echo "=== Copying openapi.json to frontend ==="
-	@cp $(OPENAPI_JSON) $(FRONTEND_JSON) >/dev/null 2>&1
+	@cp $(OPENAPI_JSON) $(FRONTEND_JSON) >/dev/null
 	@echo "=== Finished copying openapi.json ==="
 
 orval: copy
 	@echo "=== Running Orval to generate API hooks ==="
-	@docker-compose run --rm frontend npx orval --config $(ORVAL_CONFIG) >/dev/null 2>&1
+	@docker-compose run --rm frontend npx orval --config $(ORVAL_CONFIG)
 	@echo "=== Orval finished running ==="
 
 # ------------------------
@@ -37,12 +37,12 @@ format: format_backend format_frontend
 
 format_backend:
 	@echo "=== Running Black formatter inside Docker ==="
-	@docker-compose run --rm backend black . >/dev/null 2>&1
+	@docker-compose run --rm backend black .
 	@git add .
 	@echo "=== Finished Black formatting ==="
 
 format_frontend:
 	@echo "=== Running Prettier on frontend ==="
-	@docker-compose run --rm frontend npx prettier --write . >/dev/null 2>&1
+	@docker-compose run --rm frontend npx prettier --write .
 	@git add frontend
 	@echo "=== Finished Prettier formatting ==="

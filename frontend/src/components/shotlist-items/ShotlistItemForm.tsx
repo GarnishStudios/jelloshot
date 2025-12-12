@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { ShotlistItem } from "../../types";
+import type { ShotlistItem } from "@/type-gen/api";
 
 interface ShotlistItemFormProps {
   onSubmit: (item: Partial<ShotlistItem>) => void;

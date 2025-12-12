@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import type { Project, Shotlist } from "../types";
-import { projectsService } from "../services/projects.service";
-import { shotlistsService } from "../services/shotlists.service";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { Project } from "@/type-gen/api";
+import type { Shotlist } from "@/type-gen/api";
 
 export const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,12 +27,15 @@ export const ProjectDetail: React.FC = () => {
 
   const fetchProjectDetails = async () => {
     try {
-      const [projectData, shotlistsData] = await Promise.all([
-        projectsService.getProject(id!),
-        shotlistsService.getProjectShotlists(id!),
-      ]);
-      setProject(projectData);
-      setShotlists(shotlistsData);
+      if (id) {
+        const [{ data: projectData }, { data: shotlistsData }] =
+          await Promise.all([
+            getCallSheetAPI().readProjectApiProjectsProjectIdGet(id),
+            getCallSheetAPI().readShotlistsApiProjectsProjectIdShotlistsGet(id),
+          ]);
+        setProject(projectData);
+        setShotlists(shotlistsData);
+      }
     } catch (error: any) {
       console.error("Failed to fetch project details:", error);
       if (error.response?.status === 401) {
@@ -52,20 +55,23 @@ export const ProjectDetail: React.FC = () => {
   const handleCreateShotlist = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const createdShotlist = await shotlistsService.createShotlist(
-        id!,
-        newShotlist,
-      );
-      setShotlists([...shotlists, createdShotlist]);
-      setShowNewShotlistForm(false);
-      setNewShotlist({
-        name: "",
-        shooting_date: "",
-        call_time: "08:00",
-        wrap_time: "18:00",
-        location: "",
-        notes: "",
-      });
+      if (id) {
+        const { data: createdShotlist } =
+          await getCallSheetAPI().createShotlistApiProjectsProjectIdShotlistsPost(
+            id,
+            newShotlist,
+          );
+        setShotlists([...shotlists, createdShotlist]);
+        setShowNewShotlistForm(false);
+        setNewShotlist({
+          name: "",
+          shooting_date: "",
+          call_time: "08:00",
+          wrap_time: "18:00",
+          location: "",
+          notes: "",
+        });
+      }
     } catch (error) {
       console.error("Failed to create shotlist:", error);
     }
@@ -74,7 +80,9 @@ export const ProjectDetail: React.FC = () => {
   const handleDeleteShotlist = async (shotlistId: string) => {
     if (confirm("Are you sure you want to delete this shotlist?")) {
       try {
-        await shotlistsService.deleteShotlist(shotlistId);
+        await getCallSheetAPI().deleteShotlistApiShotlistsShotlistIdDelete(
+          shotlistId,
+        );
         setShotlists(shotlists.filter((s) => s.id !== shotlistId));
       } catch (error) {
         console.error("Failed to delete shotlist:", error);

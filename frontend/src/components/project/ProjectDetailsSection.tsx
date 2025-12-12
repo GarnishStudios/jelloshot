@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import type { Project } from "../../types";
-import { projectsService } from "../../services/projects.service";
 import { formatTimeTo12Hour } from "../../utils/timeCalculations";
 import { InlineEdit } from "../ui/InlineEdit";
 import { TimeInput12Hour } from "../ui/TimeInput12Hour";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { Project } from "@/type-gen/api";
 
 interface ProjectDetailsSectionProps {
   project: Project;
@@ -20,9 +20,13 @@ export const ProjectDetailsSection: React.FC<ProjectDetailsSectionProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const handleFieldUpdate = async (field: keyof Project, value: string) => {
     try {
-      const updatedProject = await projectsService.updateProject(project.id, {
-        [field]: value || null,
-      });
+      const { data: updatedProject } =
+        await getCallSheetAPI().updateProjectApiProjectsProjectIdPut(
+          project.id,
+          {
+            [field]: value || null,
+          },
+        );
       onUpdate(updatedProject);
 
       // Notify parent if start_time or end_time changed

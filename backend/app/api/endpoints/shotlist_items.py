@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
 from app.db.database import get_db
+from app.schemas.image_response import ImageResponse
 from app.schemas.shotlist_item import (
     ShotlistItem,
     ShotlistItemCreate,
@@ -14,6 +15,11 @@ from app.api.endpoints.auth import get_current_user
 from app.services import shotlist_items as shotlist_item_service
 from app.services import shotlists as shotlist_service
 from app.services import projects as project_service
+import os
+import uuid
+from PIL import Image
+import io
+
 
 router = APIRouter()
 
@@ -148,18 +154,13 @@ def reorder_shotlist_items(
     return items
 
 
-@router.post("/shotlist-items/{item_id}/upload-image")
+@router.post("/shotlist-items/{item_id}/upload-image", response_model=ImageResponse)
 async def upload_image(
     item_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    import os
-    import uuid
-    from PIL import Image
-    import io
-
     db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")

@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { clientsService } from "../services/clients.service";
-import type { Client } from "../types";
-import { projectsService } from "../services/projects.service";
-import type { Project } from "../types";
 import { Button } from "@/components/ui/button";
 import {
   SortSelector,
   type SortOption,
   type SortOrder,
 } from "@/components/ui/SortSelector";
+import { getCallSheetAPI } from "@/type-gen/api";
+import type { Client } from "@/type-gen/api";
+import type { Project } from "@/type-gen/api";
 
 export const ClientDetail: React.FC = () => {
   const { clientId } = useParams<{ clientId: string }>();
@@ -27,10 +26,11 @@ export const ClientDetail: React.FC = () => {
 
     const fetchData = async () => {
       try {
-        const [clientData, projectsData] = await Promise.all([
-          clientsService.getById(clientId),
-          projectsService.getProjects(),
-        ]);
+        const [{ data: clientData }, { data: projectsData }] =
+          await Promise.all([
+            getCallSheetAPI().readClientApiClientsClientIdGet(clientId),
+            getCallSheetAPI().readProjectsApiProjectsGet(),
+          ]);
         setClient(clientData);
         // Filter projects for this client
         const clientProjects = projectsData.filter(
@@ -55,10 +55,11 @@ export const ClientDetail: React.FC = () => {
     if (!newProjectName.trim() || !clientId) return;
 
     try {
-      const newProject = await projectsService.createProject({
-        name: newProjectName,
-        client_id: clientId,
-      });
+      const { data: newProject } =
+        await getCallSheetAPI().createProjectApiProjectsPost({
+          name: newProjectName,
+          client_id: clientId,
+        });
       setProjects([...projects, newProject]);
       setNewProjectName("");
       setShowCreateForm(false);

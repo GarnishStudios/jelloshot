@@ -6,6 +6,7 @@ from app.core.oauth import oauth
 from app.db.database import get_db
 from app.models.user import User
 from app.core.config import settings
+from app.schemas.user import User as UserSchema
 
 router = APIRouter()
 
@@ -70,7 +71,7 @@ async def logout(request: Request):
     return {"message": "Logged out"}
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserSchema)
 async def get_current_user(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     if not user_id:
