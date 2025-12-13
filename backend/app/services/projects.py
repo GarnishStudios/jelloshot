@@ -4,8 +4,11 @@ from app.models.project import Project
 from app.schemas.project import ProjectCreate, ProjectUpdate
 
 
-def get_project(db: Session, project_id: UUID):
-    return db.query(Project).filter(Project.id == project_id).first()
+def get_project(db: Session, project_id: UUID, user_id: UUID = None):
+    query = db.query(Project).filter(Project.id == project_id)
+    if user_id:
+        query = query.filter(Project.user_id == user_id)
+    return query.first()
 
 
 def get_user_projects(db: Session, user_id: UUID, skip: int = 0, limit: int = 100):
@@ -36,8 +39,10 @@ def create_project(db: Session, project: ProjectCreate, user_id: UUID):
     return db_project
 
 
-def update_project(db: Session, project_id: UUID, project: ProjectUpdate):
-    db_project = db.query(Project).filter(Project.id == project_id).first()
+def update_project(
+    db: Session, project_id: UUID, project: ProjectUpdate, user_id: UUID
+):
+    db_project = get_project(db, project_id, user_id=user_id)
     if db_project:
         update_data = project.model_dump(exclude_unset=True)
         for field, value in update_data.items():
@@ -47,8 +52,8 @@ def update_project(db: Session, project_id: UUID, project: ProjectUpdate):
     return db_project
 
 
-def delete_project(db: Session, project_id: UUID):
-    db_project = db.query(Project).filter(Project.id == project_id).first()
+def delete_project(db: Session, project_id: UUID, user_id: UUID):
+    db_project = get_project(db, project_id, user_id=user_id)
     if db_project:
         db.delete(db_project)
         db.commit()

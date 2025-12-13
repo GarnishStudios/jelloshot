@@ -25,13 +25,11 @@ def read_shotlists(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this project"
-        )
 
     shotlists = shotlist_service.get_project_shotlists(
         db, project_id=project_id, skip=skip, limit=limit
@@ -46,13 +44,11 @@ def create_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this project"
-        )
 
     return shotlist_service.create_shotlist(
         db=db, shotlist=shotlist, project_id=project_id
@@ -65,15 +61,11 @@ def read_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
-
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this shotlist"
-        )
 
     return db_shotlist
 
@@ -85,18 +77,14 @@ def update_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to update this shotlist"
-        )
-
     return shotlist_service.update_shotlist(
-        db=db, shotlist_id=shotlist_id, shotlist=shotlist
+        db=db, shotlist_id=shotlist_id, shotlist=shotlist, user_id=current_user.id
     )
 
 
@@ -106,15 +94,13 @@ def delete_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to delete this shotlist"
-        )
-
-    shotlist_service.delete_shotlist(db=db, shotlist_id=shotlist_id)
+    shotlist_service.delete_shotlist(
+        db=db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     return {"detail": "Shotlist deleted successfully"}

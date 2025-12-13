@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.api.endpoints import projects, shotlists, shotlist_items, clients
@@ -8,6 +8,7 @@ from app.db.database import engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import text
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from app.api.endpoints import auth
 from contextlib import asynccontextmanager
 
@@ -29,6 +30,21 @@ async def lifespan(app: FastAPI):
     engine.dispose()
 
 
+# Security Headers Middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        # Add security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
+        return response
+
+
 app = FastAPI(
     title="Call Sheet API",
     description="Create and manage call sheets",
@@ -37,6 +53,9 @@ app = FastAPI(
     redoc_url="/api/redoc" if settings.ENVIRONMENT != "production" else None,
     lifespan=lifespan,
 )
+
+# Add security headers middleware
+app.add_middleware(SecurityHeadersMiddleware)
 
 app.add_middleware(
     SessionMiddleware,
@@ -55,7 +74,7 @@ app.include_router(shotlists.router, prefix="/api", tags=["Shotlists"])
 app.include_router(shotlist_items.router, prefix="/api", tags=["Shotlist Items"])
 
 # Mount static assets (JS, CSS, images) - must be before catch-all
-app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="client-bundle/assets"), name="assets")
 
 # Serve uploaded files
 if os.path.exists("uploads"):
@@ -65,11 +84,6 @@ if os.path.exists("uploads"):
 # Catch-all route to serve the SPA for client-side routing
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    # Serve static files from the dist root (like vite.svg)
-    static_file = os.path.join(os.getcwd(), "static", full_path)
-    if os.path.isfile(static_file) and not full_path.startswith("api"):
-        return FileResponse(static_file)
-
-    # Otherwise serve the SPA index.html for client-side routing
-    index_path = os.path.join(os.getcwd(), "static", "index.html")
+    # Serve the SPA index.html for client-side routing
+    index_path = os.path.join(os.getcwd(), "client-bundle", "index.html")
     return FileResponse(index_path)

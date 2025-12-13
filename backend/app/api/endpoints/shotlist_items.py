@@ -19,6 +19,7 @@ import os
 import uuid
 from PIL import Image
 import io
+from app.schemas.shotlist_item import ShotlistItemUpdate
 
 
 router = APIRouter()
@@ -30,15 +31,11 @@ def read_shotlist_items(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
-
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this shotlist"
-        )
 
     items = shotlist_item_service.get_shotlist_items(db, shotlist_id=shotlist_id)
     return items
@@ -51,15 +48,11 @@ def create_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
-
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this shotlist"
-        )
 
     return shotlist_item_service.create_shotlist_item(
         db=db, item=item, shotlist_id=shotlist_id
@@ -72,16 +65,11 @@ def read_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this item"
-        )
 
     return db_item
 
@@ -93,18 +81,15 @@ def update_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to update this item"
-        )
-
-    return shotlist_item_service.update_shotlist_item(db=db, item_id=item_id, item=item)
+    return shotlist_item_service.update_shotlist_item(
+        db=db, item_id=item_id, item=item, user_id=current_user.id
+    )
 
 
 @router.delete("/shotlist-items/{item_id}")
@@ -113,18 +98,15 @@ def delete_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to delete this item"
-        )
-
-    shotlist_item_service.delete_shotlist_item(db=db, item_id=item_id)
+    shotlist_item_service.delete_shotlist_item(
+        db=db, item_id=item_id, user_id=current_user.id
+    )
     return {"detail": "Item deleted successfully"}
 
 
@@ -135,21 +117,18 @@ def reorder_shotlist_items(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
-
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to reorder items in this shotlist"
-        )
 
     items = shotlist_item_service.reorder_shotlist_items(
         db=db,
         shotlist_id=shotlist_id,
         reorder_request=reorder_request,
         call_time=db_shotlist.call_time,
+        user_id=current_user.id,
     )
     return items
 
@@ -161,16 +140,11 @@ async def upload_image(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=db_item.shotlist_id)
-    db_project = project_service.get_project(db, project_id=db_shotlist.project_id)
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to upload image for this item"
-        )
 
     # Validate file type
     if not file.content_type.startswith("image/"):
@@ -178,6 +152,13 @@ async def upload_image(
 
     # Read the uploaded file
     contents = await file.read()
+
+    # Validate file size
+    if len(contents) > (3 * 1024 * 1024):
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Maximum size is 3MB",
+        )
 
     # Process the image with PIL
     try:
@@ -228,14 +209,13 @@ async def upload_image(
         image_url = f"/static/uploads/{unique_filename}"
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
-
-    # Update the item with the image URL
-    from app.schemas.shotlist_item import ShotlistItemUpdate
+        raise HTTPException(
+            status_code=400, detail="Error processing image. Please try again."
+        )
 
     update_data = ShotlistItemUpdate(shot_reference_image=image_url)
     updated_item = shotlist_item_service.update_shotlist_item(
-        db=db, item_id=item_id, item=update_data
+        db=db, item_id=item_id, item=update_data, user_id=current_user.id
     )
 
     return {"url": image_url}

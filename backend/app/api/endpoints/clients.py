@@ -39,13 +39,11 @@ def read_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    if db_client.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this client"
-        )
     return db_client
 
 
@@ -56,14 +54,14 @@ def update_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    if db_client.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to update this client"
-        )
-    return client_service.update_client(db=db, client_id=client_id, client=client)
+    return client_service.update_client(
+        db=db, client_id=client_id, client=client, user_id=current_user.id
+    )
 
 
 @router.delete("/{client_id}")
@@ -72,12 +70,10 @@ def delete_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    if db_client.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to delete this client"
-        )
-    client_service.delete_client(db=db, client_id=client_id)
+    client_service.delete_client(db=db, client_id=client_id, user_id=current_user.id)
     return {"detail": "Client deleted successfully"}

@@ -64,6 +64,9 @@ dist-ssr/
 uploads/
 !uploads/.gitkeep
 
+# Frontend build artifacts (served from backend)
+backend/client-bundle/
+
 # Docker
 postgres_data/
 
