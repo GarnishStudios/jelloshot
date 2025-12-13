@@ -179,6 +179,13 @@ async def upload_image(
     # Read the uploaded file
     contents = await file.read()
 
+    # Validate file size
+    if len(contents) > (3 * 1024 * 1024):
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Maximum size is 3MB",
+        )
+
     # Process the image with PIL
     try:
         image = Image.open(io.BytesIO(contents))
@@ -228,7 +235,9 @@ async def upload_image(
         image_url = f"/static/uploads/{unique_filename}"
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail="Error processing image. Please try again."
+        )
 
     # Update the item with the image URL
     from app.schemas.shotlist_item import ShotlistItemUpdate

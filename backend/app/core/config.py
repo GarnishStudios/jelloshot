@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator, computed_field
+from pydantic import field_validator, computed_field, ValidationInfo
 from typing import List, Union
 import os
 import secrets as import_secrets
@@ -44,6 +44,37 @@ class Settings(BaseSettings):
         "image/gif",
         "image/webp",
     ]
+
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:
+        """Ensure SECRET_KEY is changed in production"""
+        if (
+            info.data.get("ENVIRONMENT") == "production"
+            and v == "your-secret-key-here-change-in-production"
+        ):
+            raise ValueError(
+                "SECRET_KEY must be changed in production! Set a strong random value in environment variables."
+            )
+        if info.data.get("ENVIRONMENT") == "production" and len(v) < 32:
+            raise ValueError("SECRET_KEY must be at least 32 characters in production")
+        return v
+
+    @field_validator("GOOGLE_CLIENT_ID")
+    @classmethod
+    def validate_google_client_id(cls, v: str, info: ValidationInfo) -> str:
+        """Ensure OAuth credentials are set in production"""
+        if info.data.get("ENVIRONMENT") == "production" and not v:
+            raise ValueError("GOOGLE_CLIENT_ID must be set in production")
+        return v
+
+    @field_validator("GOOGLE_CLIENT_SECRET")
+    @classmethod
+    def validate_google_client_secret(cls, v: str, info: ValidationInfo) -> str:
+        """Ensure OAuth credentials are set in production"""
+        if info.data.get("ENVIRONMENT") == "production" and not v:
+            raise ValueError("GOOGLE_CLIENT_SECRET must be set in production")
+        return v
 
     model_config = {"env_file": ".env", "case_sensitive": True}
 
