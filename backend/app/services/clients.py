@@ -32,8 +32,10 @@ def create_client(db: Session, client: ClientCreate, user_id: UUID) -> Client:
     return db_client
 
 
-def update_client(db: Session, client_id: UUID, client: ClientUpdate) -> Client:
-    db_client = get_client(db, client_id)
+def update_client(
+    db: Session, client_id: UUID, client: ClientUpdate, user_id: UUID
+) -> Client:
+    db_client = get_client(db, client_id, user_id=user_id)
     if db_client is None:
         return None
     update_data = client.model_dump(exclude_unset=True)
@@ -44,8 +46,8 @@ def update_client(db: Session, client_id: UUID, client: ClientUpdate) -> Client:
     return db_client
 
 
-def delete_client(db: Session, client_id: UUID) -> bool:
-    db_client = get_client(db, client_id)
+def delete_client(db: Session, client_id: UUID, user_id: UUID) -> bool:
+    db_client = get_client(db, client_id, user_id=user_id)
     if db_client is None:
         return False
     db.delete(db_client)

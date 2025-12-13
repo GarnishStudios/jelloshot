@@ -32,8 +32,10 @@ def create_shotlist(db: Session, shotlist: ShotlistCreate, project_id: UUID):
     return db_shotlist
 
 
-def update_shotlist(db: Session, shotlist_id: UUID, shotlist: ShotlistUpdate):
-    db_shotlist = db.query(Shotlist).filter(Shotlist.id == shotlist_id).first()
+def update_shotlist(
+    db: Session, shotlist_id: UUID, shotlist: ShotlistUpdate, user_id: UUID
+):
+    db_shotlist = get_shotlist(db, shotlist_id, user_id=user_id)
     if db_shotlist:
         update_data = shotlist.dict(exclude_unset=True)
         for field, value in update_data.items():
@@ -43,8 +45,8 @@ def update_shotlist(db: Session, shotlist_id: UUID, shotlist: ShotlistUpdate):
     return db_shotlist
 
 
-def delete_shotlist(db: Session, shotlist_id: UUID):
-    db_shotlist = db.query(Shotlist).filter(Shotlist.id == shotlist_id).first()
+def delete_shotlist(db: Session, shotlist_id: UUID, user_id: UUID):
+    db_shotlist = get_shotlist(db, shotlist_id, user_id=user_id)
     if db_shotlist:
         db.delete(db_shotlist)
         db.commit()

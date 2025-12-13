@@ -80,7 +80,9 @@ def update_project(
     )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    return project_service.update_project(db=db, project_id=project_id, project=project)
+    return project_service.update_project(
+        db=db, project_id=project_id, project=project, user_id=current_user.id
+    )
 
 
 @router.delete("/{project_id}")
@@ -94,5 +96,7 @@ def delete_project(
     )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    project_service.delete_project(db=db, project_id=project_id)
+    project_service.delete_project(
+        db=db, project_id=project_id, user_id=current_user.id
+    )
     return {"detail": "Project deleted successfully"}

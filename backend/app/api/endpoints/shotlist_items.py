@@ -87,7 +87,9 @@ def update_shotlist_item(
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    return shotlist_item_service.update_shotlist_item(db=db, item_id=item_id, item=item)
+    return shotlist_item_service.update_shotlist_item(
+        db=db, item_id=item_id, item=item, user_id=current_user.id
+    )
 
 
 @router.delete("/shotlist-items/{item_id}")
@@ -102,7 +104,9 @@ def delete_shotlist_item(
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    shotlist_item_service.delete_shotlist_item(db=db, item_id=item_id)
+    shotlist_item_service.delete_shotlist_item(
+        db=db, item_id=item_id, user_id=current_user.id
+    )
     return {"detail": "Item deleted successfully"}
 
 
@@ -124,6 +128,7 @@ def reorder_shotlist_items(
         shotlist_id=shotlist_id,
         reorder_request=reorder_request,
         call_time=db_shotlist.call_time,
+        user_id=current_user.id,
     )
     return items
 
@@ -210,7 +215,7 @@ async def upload_image(
 
     update_data = ShotlistItemUpdate(shot_reference_image=image_url)
     updated_item = shotlist_item_service.update_shotlist_item(
-        db=db, item_id=item_id, item=update_data
+        db=db, item_id=item_id, item=update_data, user_id=current_user.id
     )
 
     return {"url": image_url}

@@ -43,8 +43,10 @@ def create_shotlist_item(db: Session, item: ShotlistItemCreate, shotlist_id: UUI
     return db_item
 
 
-def update_shotlist_item(db: Session, item_id: UUID, item: ShotlistItemUpdate):
-    db_item = db.query(ShotlistItem).filter(ShotlistItem.id == item_id).first()
+def update_shotlist_item(
+    db: Session, item_id: UUID, item: ShotlistItemUpdate, user_id: UUID
+):
+    db_item = get_shotlist_item(db, item_id, user_id=user_id)
     if db_item:
         update_data = item.dict(exclude_unset=True)
         for field, value in update_data.items():
@@ -54,8 +56,8 @@ def update_shotlist_item(db: Session, item_id: UUID, item: ShotlistItemUpdate):
     return db_item
 
 
-def delete_shotlist_item(db: Session, item_id: UUID):
-    db_item = db.query(ShotlistItem).filter(ShotlistItem.id == item_id).first()
+def delete_shotlist_item(db: Session, item_id: UUID, user_id: UUID):
+    db_item = get_shotlist_item(db, item_id, user_id=user_id)
     if db_item:
         shotlist_id = db_item.shotlist_id
         order_index = db_item.order_index
@@ -85,18 +87,12 @@ def reorder_shotlist_items(
     shotlist_id: UUID,
     reorder_request: ReorderRequest,
     call_time: Optional[time] = None,
+    user_id: UUID = None,
 ):
-    # Update order indices based on the reorder request
+    # Verify each item belongs to the user before reordering
     for item_reorder in reorder_request.items:
-        db_item = (
-            db.query(ShotlistItem)
-            .filter(
-                ShotlistItem.id == item_reorder.item_id,
-                ShotlistItem.shotlist_id == shotlist_id,
-            )
-            .first()
-        )
-        if db_item:
+        db_item = get_shotlist_item(db, item_reorder.item_id, user_id=user_id)
+        if db_item and db_item.shotlist_id == shotlist_id:
             db_item.order_index = item_reorder.new_index
 
     db.commit()

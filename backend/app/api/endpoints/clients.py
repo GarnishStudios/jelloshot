@@ -59,7 +59,9 @@ def update_client(
     )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    return client_service.update_client(db=db, client_id=client_id, client=client)
+    return client_service.update_client(
+        db=db, client_id=client_id, client=client, user_id=current_user.id
+    )
 
 
 @router.delete("/{client_id}")
@@ -73,5 +75,5 @@ def delete_client(
     )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    client_service.delete_client(db=db, client_id=client_id)
+    client_service.delete_client(db=db, client_id=client_id, user_id=current_user.id)
     return {"detail": "Client deleted successfully"}

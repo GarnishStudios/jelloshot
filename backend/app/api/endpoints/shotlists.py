@@ -84,7 +84,7 @@ def update_shotlist(
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
     return shotlist_service.update_shotlist(
-        db=db, shotlist_id=shotlist_id, shotlist=shotlist
+        db=db, shotlist_id=shotlist_id, shotlist=shotlist, user_id=current_user.id
     )
 
 
@@ -100,5 +100,7 @@ def delete_shotlist(
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
-    shotlist_service.delete_shotlist(db=db, shotlist_id=shotlist_id)
+    shotlist_service.delete_shotlist(
+        db=db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     return {"detail": "Shotlist deleted successfully"}
