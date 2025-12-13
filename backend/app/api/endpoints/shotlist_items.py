@@ -31,7 +31,9 @@ def read_shotlist_items(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
@@ -46,7 +48,9 @@ def create_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
@@ -61,7 +65,9 @@ def read_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id, user_id=current_user.id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -75,7 +81,9 @@ def update_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id, user_id=current_user.id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -88,7 +96,9 @@ def delete_shotlist_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id, user_id=current_user.id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -103,7 +113,9 @@ def reorder_shotlist_items(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
@@ -123,7 +135,9 @@ async def upload_image(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_item = shotlist_item_service.get_shotlist_item(db, item_id=item_id, user_id=current_user.id)
+    db_item = shotlist_item_service.get_shotlist_item(
+        db, item_id=item_id, user_id=current_user.id
+    )
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -193,7 +207,6 @@ async def upload_image(
         raise HTTPException(
             status_code=400, detail="Error processing image. Please try again."
         )
-
 
     update_data = ShotlistItemUpdate(shot_reference_image=image_url)
     updated_item = shotlist_item_service.update_shotlist_item(

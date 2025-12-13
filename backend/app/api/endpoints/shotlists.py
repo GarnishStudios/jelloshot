@@ -25,7 +25,9 @@ def read_shotlists(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -42,7 +44,9 @@ def create_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -57,7 +61,9 @@ def read_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
@@ -71,7 +77,9 @@ def update_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 
@@ -86,7 +94,9 @@ def delete_shotlist(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_shotlist = shotlist_service.get_shotlist(db, shotlist_id=shotlist_id, user_id=current_user.id)
+    db_shotlist = shotlist_service.get_shotlist(
+        db, shotlist_id=shotlist_id, user_id=current_user.id
+    )
     if db_shotlist is None:
         raise HTTPException(status_code=404, detail="Shotlist not found")
 

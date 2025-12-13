@@ -60,7 +60,9 @@ def read_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return db_project
@@ -73,7 +75,9 @@ def update_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return project_service.update_project(db=db, project_id=project_id, project=project)
@@ -85,7 +89,9 @@ def delete_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
+    db_project = project_service.get_project(
+        db, project_id=project_id, user_id=current_user.id
+    )
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     project_service.delete_project(db=db, project_id=project_id)

@@ -39,7 +39,9 @@ def read_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id, user_id=current_user.id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     return db_client
@@ -52,7 +54,9 @@ def update_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id, user_id=current_user.id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     return client_service.update_client(db=db, client_id=client_id, client=client)
@@ -64,7 +68,9 @@ def delete_client(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_client = client_service.get_client(db, client_id=client_id, user_id=current_user.id)
+    db_client = client_service.get_client(
+        db, client_id=client_id, user_id=current_user.id
+    )
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     client_service.delete_client(db=db, client_id=client_id)
