@@ -74,7 +74,7 @@ app.include_router(shotlists.router, prefix="/api", tags=["Shotlists"])
 app.include_router(shotlist_items.router, prefix="/api", tags=["Shotlist Items"])
 
 # Mount static assets (JS, CSS, images) - must be before catch-all
-app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="client-bundle/assets"), name="assets")
 
 # Serve uploaded files
 if os.path.exists("uploads"):
@@ -84,6 +84,6 @@ if os.path.exists("uploads"):
 # Catch-all route to serve the SPA for client-side routing
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    # Otherwise serve the SPA index.html for client-side routing
-    index_path = os.path.join(os.getcwd(), "static", "index.html")
+    # Serve the SPA index.html for client-side routing
+    index_path = os.path.join(os.getcwd(), "client-bundle", "index.html")
     return FileResponse(index_path)

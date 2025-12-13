@@ -34,7 +34,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     volumes:
       - ./backend:/backend
-      - ./frontend/dist:/backend/static
+      - ./frontend/dist:/backend/client-bundle
     ports:
       - "8000:8000"
     networks:

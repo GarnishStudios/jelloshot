@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend source
 COPY backend/ .
 
-# Copy frontend build into backend/static
-COPY --from=frontend /frontend/dist ./static
+# Copy frontend build into backend/client-bundle
+COPY --from=frontend /frontend/dist ./client-bundle
 
 EXPOSE 8000
