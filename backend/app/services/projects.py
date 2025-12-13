@@ -4,8 +4,11 @@ from app.models.project import Project
 from app.schemas.project import ProjectCreate, ProjectUpdate
 
 
-def get_project(db: Session, project_id: UUID):
-    return db.query(Project).filter(Project.id == project_id).first()
+def get_project(db: Session, project_id: UUID, user_id: UUID = None):
+    query = db.query(Project).filter(Project.id == project_id)
+    if user_id:
+        query = query.filter(Project.user_id == user_id)
+    return query.first()
 
 
 def get_user_projects(db: Session, user_id: UUID, skip: int = 0, limit: int = 100):

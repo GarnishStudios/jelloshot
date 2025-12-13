@@ -84,11 +84,6 @@ if os.path.exists("uploads"):
 # Catch-all route to serve the SPA for client-side routing
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    # Try to serve static file if it exists
-    static_file = os.path.join(os.getcwd(), "static", full_path)
-    if os.path.isfile(static_file):
-        return FileResponse(static_file)
-    
     # Otherwise serve the SPA index.html for client-side routing
     index_path = os.path.join(os.getcwd(), "static", "index.html")
     return FileResponse(index_path)

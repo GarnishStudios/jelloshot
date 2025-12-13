@@ -12,6 +12,7 @@ from app.schemas.project import (
 from app.models.user import User
 from app.api.endpoints.auth import get_current_user
 from app.services import projects as project_service
+from app.services import clients as client_service
 
 router = APIRouter()
 
@@ -25,18 +26,16 @@ def read_projects(
     current_user: User = Depends(get_current_user),
 ):
     if client_id:
+
+        client = client_service.get_client(db, client_id, user_id=current_user.id)
+        if not client:
+            raise HTTPException(
+                status_code=404,
+                detail="Client not found",
+            )
         projects = project_service.get_client_projects(
             db, client_id=client_id, skip=skip, limit=limit
         )
-        # Filter to ensure user owns the client
-        from app.services import clients as client_service
-
-        client = client_service.get_client(db, client_id)
-        if not client or client.user_id != current_user.id:
-            raise HTTPException(
-                status_code=403,
-                detail="Not authorized to access this client's projects",
-            )
     else:
         projects = project_service.get_user_projects(
             db, user_id=current_user.id, skip=skip, limit=limit
@@ -61,13 +60,9 @@ def read_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id)
+    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this project"
-        )
     return db_project
 
 
@@ -78,13 +73,9 @@ def update_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id)
+    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to update this project"
-        )
     return project_service.update_project(db=db, project_id=project_id, project=project)
 
 
@@ -94,12 +85,8 @@ def delete_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    db_project = project_service.get_project(db, project_id=project_id)
+    db_project = project_service.get_project(db, project_id=project_id, user_id=current_user.id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    if db_project.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to delete this project"
-        )
     project_service.delete_project(db=db, project_id=project_id)
     return {"detail": "Project deleted successfully"}

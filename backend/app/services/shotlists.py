@@ -1,11 +1,15 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
 from app.models.shotlist import Shotlist
+from app.models.project import Project
 from app.schemas.shotlist import ShotlistCreate, ShotlistUpdate
 
 
-def get_shotlist(db: Session, shotlist_id: UUID):
-    return db.query(Shotlist).filter(Shotlist.id == shotlist_id).first()
+def get_shotlist(db: Session, shotlist_id: UUID, user_id: UUID = None):
+    query = db.query(Shotlist).filter(Shotlist.id == shotlist_id)
+    if user_id:
+        query = query.join(Project).filter(Project.user_id == user_id)
+    return query.first()
 
 
 def get_project_shotlists(

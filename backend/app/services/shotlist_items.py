@@ -3,6 +3,8 @@ from uuid import UUID
 from datetime import time, datetime, timedelta
 from typing import Optional
 from app.models.shotlist_item import ShotlistItem
+from app.models.shotlist import Shotlist
+from app.models.project import Project
 from app.schemas.shotlist_item import (
     ShotlistItemCreate,
     ShotlistItemUpdate,
@@ -10,8 +12,11 @@ from app.schemas.shotlist_item import (
 )
 
 
-def get_shotlist_item(db: Session, item_id: UUID):
-    return db.query(ShotlistItem).filter(ShotlistItem.id == item_id).first()
+def get_shotlist_item(db: Session, item_id: UUID, user_id: UUID = None):
+    query = db.query(ShotlistItem).filter(ShotlistItem.id == item_id)
+    if user_id:
+        query = query.join(Shotlist).join(Project).filter(Project.user_id == user_id)
+    return query.first()
 
 
 def get_shotlist_items(db: Session, shotlist_id: UUID):

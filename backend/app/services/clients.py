@@ -17,8 +17,11 @@ def get_user_clients(
     )
 
 
-def get_client(db: Session, client_id: UUID) -> Optional[Client]:
-    return db.query(Client).filter(Client.id == client_id).first()
+def get_client(db: Session, client_id: UUID, user_id: UUID = None) -> Optional[Client]:
+    query = db.query(Client).filter(Client.id == client_id)
+    if user_id:
+        query = query.filter(Client.user_id == user_id)
+    return query.first()
 
 
 def create_client(db: Session, client: ClientCreate, user_id: UUID) -> Client:
