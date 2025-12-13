@@ -16,7 +16,7 @@ all: generate-types format
 # ------------------------
 # OpenAPI / Orval pipeline
 # ------------------------
-generate-types: $(ORVAL_OUTPUT) format_frontend
+generate-types: $(ORVAL_OUTPUT)
 	@echo "=== All OpenAPI/Orval steps finished ==="
 
 $(OPENAPI_JSON): $(BACKEND_SOURCES)

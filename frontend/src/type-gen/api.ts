@@ -4,8 +4,11 @@
  * Call Sheet API
  * OpenAPI spec version: 1.0.0
  */
-import * as axios from "axios";
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import * as axios from 'axios';
+import type {
+  AxiosRequestConfig,
+  AxiosResponse
+} from 'axios';
 
 export interface BodyUploadImageApiShotlistItemsItemIdUploadImagePost {
   file: Blob;
@@ -152,14 +155,15 @@ export interface ProjectCreate {
   location?: ProjectCreateLocation;
 }
 
-export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
+export type ProjectStatus = typeof ProjectStatus[keyof typeof ProjectStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProjectStatus = {
-  pre_production: "pre_production",
-  production: "production",
-  post_production: "post_production",
-  completed: "completed",
+  pre_production: 'pre_production',
+  production: 'production',
+  post_production: 'post_production',
+  completed: 'completed',
 } as const;
 
 export type ProjectUpdateName = string | null;
@@ -321,8 +325,7 @@ export type ShotlistItemScheduledTime = string | null;
 
 export type ShotlistItemCustomPropertiesAnyOf = { [key: string]: unknown };
 
-export type ShotlistItemCustomProperties =
-  ShotlistItemCustomPropertiesAnyOf | null;
+export type ShotlistItemCustomProperties = ShotlistItemCustomPropertiesAnyOf | null;
 
 export interface ShotlistItem {
   /**
@@ -374,12 +377,9 @@ export type ShotlistItemCreateFps = number | null;
 
 export type ShotlistItemCreateScheduledTime = string | null;
 
-export type ShotlistItemCreateCustomPropertiesAnyOf = {
-  [key: string]: unknown;
-};
+export type ShotlistItemCreateCustomPropertiesAnyOf = { [key: string]: unknown };
 
-export type ShotlistItemCreateCustomProperties =
-  ShotlistItemCreateCustomPropertiesAnyOf | null;
+export type ShotlistItemCreateCustomProperties = ShotlistItemCreateCustomPropertiesAnyOf | null;
 
 export type ShotlistItemCreateIsCompleted = boolean | null;
 
@@ -437,12 +437,9 @@ export type ShotlistItemUpdateFps = number | null;
 
 export type ShotlistItemUpdateScheduledTime = string | null;
 
-export type ShotlistItemUpdateCustomPropertiesAnyOf = {
-  [key: string]: unknown;
-};
+export type ShotlistItemUpdateCustomPropertiesAnyOf = { [key: string]: unknown };
 
-export type ShotlistItemUpdateCustomProperties =
-  ShotlistItemUpdateCustomPropertiesAnyOf | null;
+export type ShotlistItemUpdateCustomProperties = ShotlistItemUpdateCustomPropertiesAnyOf | null;
 
 export type ShotlistItemUpdateIsCompleted = boolean | null;
 
@@ -533,443 +530,371 @@ export interface ValidationError {
 }
 
 export type ReadClientsApiClientsGetParams = {
-  skip?: number;
-  limit?: number;
+skip?: number;
+limit?: number;
 };
 
 export type ReadProjectsApiProjectsGetParams = {
-  skip?: number;
-  limit?: number;
-  client_id?: string | null;
+skip?: number;
+limit?: number;
+client_id?: string | null;
 };
 
 export type ReadShotlistsApiProjectsProjectIdShotlistsGetParams = {
-  skip?: number;
-  limit?: number;
+skip?: number;
+limit?: number;
 };
 
 export const getCallSheetAPI = () => {
-  /**
-   * @summary Login Google
-   */
-  const loginGoogleApiAuthLoginGoogleGet = <TData = AxiosResponse<unknown>>(
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/auth/login/google`, options);
-  };
+/**
+ * @summary Login Google
+ */
+const loginGoogleApiAuthLoginGoogleGet = <TData = AxiosResponse<unknown>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/auth/login/google`,options
+    );
+  }
 
-  /**
-   * @summary Auth Google Callback
-   */
-  const authGoogleCallbackApiAuthGoogleCallbackGet = <
-    TData = AxiosResponse<unknown>,
-  >(
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/auth/google/callback`, options);
-  };
+/**
+ * @summary Auth Google Callback
+ */
+const authGoogleCallbackApiAuthGoogleCallbackGet = <TData = AxiosResponse<unknown>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/auth/google/callback`,options
+    );
+  }
 
-  /**
-   * @summary Logout
-   */
-  const logoutApiAuthLogoutPost = <TData = AxiosResponse<unknown>>(
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.post(`/api/auth/logout`, undefined, options);
-  };
+/**
+ * @summary Logout
+ */
+const logoutApiAuthLogoutPost = <TData = AxiosResponse<unknown>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.post(
+      `/api/auth/logout`,undefined,options
+    );
+  }
 
-  /**
-   * @summary Get Current User
-   */
-  const getCurrentUserApiAuthMeGet = <TData = AxiosResponse<User>>(
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/auth/me`, options);
-  };
+/**
+ * @summary Get Current User
+ */
+const getCurrentUserApiAuthMeGet = <TData = AxiosResponse<User>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/auth/me`,options
+    );
+  }
 
-  /**
-   * @summary Read Clients
-   */
-  const readClientsApiClientsGet = <TData = AxiosResponse<Client[]>>(
-    params?: ReadClientsApiClientsGetParams,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/clients/`, {
-      ...options,
-      params: { ...params, ...options?.params },
-    });
-  };
+/**
+ * @summary Read Clients
+ */
+const readClientsApiClientsGet = <TData = AxiosResponse<Client[]>>(
+    params?: ReadClientsApiClientsGetParams, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/clients/`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
 
-  /**
-   * @summary Create Client
-   */
-  const createClientApiClientsPost = <TData = AxiosResponse<Client>>(
-    clientCreate: ClientCreate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.post(`/api/clients/`, clientCreate, options);
-  };
+/**
+ * @summary Create Client
+ */
+const createClientApiClientsPost = <TData = AxiosResponse<Client>>(
+    clientCreate: ClientCreate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.post(
+      `/api/clients/`,
+      clientCreate,options
+    );
+  }
 
-  /**
-   * @summary Read Client
-   */
-  const readClientApiClientsClientIdGet = <
-    TData = AxiosResponse<ClientWithProjects>,
-  >(
+/**
+ * @summary Read Client
+ */
+const readClientApiClientsClientIdGet = <TData = AxiosResponse<ClientWithProjects>>(
+    clientId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/clients/${clientId}`,options
+    );
+  }
+
+/**
+ * @summary Update Client
+ */
+const updateClientApiClientsClientIdPut = <TData = AxiosResponse<Client>>(
     clientId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/clients/${clientId}`, options);
-  };
+    clientUpdate: ClientUpdate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.put(
+      `/api/clients/${clientId}`,
+      clientUpdate,options
+    );
+  }
 
-  /**
-   * @summary Update Client
-   */
-  const updateClientApiClientsClientIdPut = <TData = AxiosResponse<Client>>(
-    clientId: string,
-    clientUpdate: ClientUpdate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.put(`/api/clients/${clientId}`, clientUpdate, options);
-  };
+/**
+ * @summary Delete Client
+ */
+const deleteClientApiClientsClientIdDelete = <TData = AxiosResponse<unknown>>(
+    clientId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.delete(
+      `/api/clients/${clientId}`,options
+    );
+  }
 
-  /**
-   * @summary Delete Client
-   */
-  const deleteClientApiClientsClientIdDelete = <TData = AxiosResponse<unknown>>(
-    clientId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.delete(`/api/clients/${clientId}`, options);
-  };
+/**
+ * @summary Read Projects
+ */
+const readProjectsApiProjectsGet = <TData = AxiosResponse<Project[]>>(
+    params?: ReadProjectsApiProjectsGetParams, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/projects/`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
 
-  /**
-   * @summary Read Projects
-   */
-  const readProjectsApiProjectsGet = <TData = AxiosResponse<Project[]>>(
-    params?: ReadProjectsApiProjectsGetParams,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/projects/`, {
-      ...options,
-      params: { ...params, ...options?.params },
-    });
-  };
+/**
+ * @summary Create Project
+ */
+const createProjectApiProjectsPost = <TData = AxiosResponse<Project>>(
+    projectCreate: ProjectCreate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.post(
+      `/api/projects/`,
+      projectCreate,options
+    );
+  }
 
-  /**
-   * @summary Create Project
-   */
-  const createProjectApiProjectsPost = <TData = AxiosResponse<Project>>(
-    projectCreate: ProjectCreate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.post(`/api/projects/`, projectCreate, options);
-  };
+/**
+ * @summary Read Project
+ */
+const readProjectApiProjectsProjectIdGet = <TData = AxiosResponse<ProjectWithShotlists>>(
+    projectId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/projects/${projectId}`,options
+    );
+  }
 
-  /**
-   * @summary Read Project
-   */
-  const readProjectApiProjectsProjectIdGet = <
-    TData = AxiosResponse<ProjectWithShotlists>,
-  >(
+/**
+ * @summary Update Project
+ */
+const updateProjectApiProjectsProjectIdPut = <TData = AxiosResponse<Project>>(
     projectId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/projects/${projectId}`, options);
-  };
-
-  /**
-   * @summary Update Project
-   */
-  const updateProjectApiProjectsProjectIdPut = <TData = AxiosResponse<Project>>(
-    projectId: string,
-    projectUpdate: ProjectUpdate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    projectUpdate: ProjectUpdate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.put(
       `/api/projects/${projectId}`,
-      projectUpdate,
-      options,
+      projectUpdate,options
     );
-  };
+  }
 
-  /**
-   * @summary Delete Project
-   */
-  const deleteProjectApiProjectsProjectIdDelete = <
-    TData = AxiosResponse<unknown>,
-  >(
-    projectId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.delete(`/api/projects/${projectId}`, options);
-  };
+/**
+ * @summary Delete Project
+ */
+const deleteProjectApiProjectsProjectIdDelete = <TData = AxiosResponse<unknown>>(
+    projectId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.delete(
+      `/api/projects/${projectId}`,options
+    );
+  }
 
-  /**
-   * @summary Read Shotlists
-   */
-  const readShotlistsApiProjectsProjectIdShotlistsGet = <
-    TData = AxiosResponse<Shotlist[]>,
-  >(
+/**
+ * @summary Read Shotlists
+ */
+const readShotlistsApiProjectsProjectIdShotlistsGet = <TData = AxiosResponse<Shotlist[]>>(
     projectId: string,
-    params?: ReadShotlistsApiProjectsProjectIdShotlistsGetParams,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/projects/${projectId}/shotlists`, {
-      ...options,
-      params: { ...params, ...options?.params },
-    });
-  };
+    params?: ReadShotlistsApiProjectsProjectIdShotlistsGetParams, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/projects/${projectId}/shotlists`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
 
-  /**
-   * @summary Create Shotlist
-   */
-  const createShotlistApiProjectsProjectIdShotlistsPost = <
-    TData = AxiosResponse<Shotlist>,
-  >(
+/**
+ * @summary Create Shotlist
+ */
+const createShotlistApiProjectsProjectIdShotlistsPost = <TData = AxiosResponse<Shotlist>>(
     projectId: string,
-    shotlistCreate: ShotlistCreate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    shotlistCreate: ShotlistCreate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.post(
       `/api/projects/${projectId}/shotlists`,
-      shotlistCreate,
-      options,
+      shotlistCreate,options
     );
-  };
+  }
 
-  /**
-   * @summary Read Shotlist
-   */
-  const readShotlistApiShotlistsShotlistIdGet = <
-    TData = AxiosResponse<ShotlistWithItems>,
-  >(
-    shotlistId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/shotlists/${shotlistId}`, options);
-  };
+/**
+ * @summary Read Shotlist
+ */
+const readShotlistApiShotlistsShotlistIdGet = <TData = AxiosResponse<ShotlistWithItems>>(
+    shotlistId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/shotlists/${shotlistId}`,options
+    );
+  }
 
-  /**
-   * @summary Update Shotlist
-   */
-  const updateShotlistApiShotlistsShotlistIdPut = <
-    TData = AxiosResponse<Shotlist>,
-  >(
+/**
+ * @summary Update Shotlist
+ */
+const updateShotlistApiShotlistsShotlistIdPut = <TData = AxiosResponse<Shotlist>>(
     shotlistId: string,
-    shotlistUpdate: ShotlistUpdate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    shotlistUpdate: ShotlistUpdate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.put(
       `/api/shotlists/${shotlistId}`,
-      shotlistUpdate,
-      options,
+      shotlistUpdate,options
     );
-  };
+  }
 
-  /**
-   * @summary Delete Shotlist
-   */
-  const deleteShotlistApiShotlistsShotlistIdDelete = <
-    TData = AxiosResponse<unknown>,
-  >(
-    shotlistId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.delete(`/api/shotlists/${shotlistId}`, options);
-  };
+/**
+ * @summary Delete Shotlist
+ */
+const deleteShotlistApiShotlistsShotlistIdDelete = <TData = AxiosResponse<unknown>>(
+    shotlistId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.delete(
+      `/api/shotlists/${shotlistId}`,options
+    );
+  }
 
-  /**
-   * @summary Read Shotlist Items
-   */
-  const readShotlistItemsApiShotlistsShotlistIdItemsGet = <
-    TData = AxiosResponse<ShotlistItem[]>,
-  >(
-    shotlistId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/shotlists/${shotlistId}/items`, options);
-  };
+/**
+ * @summary Read Shotlist Items
+ */
+const readShotlistItemsApiShotlistsShotlistIdItemsGet = <TData = AxiosResponse<ShotlistItem[]>>(
+    shotlistId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/shotlists/${shotlistId}/items`,options
+    );
+  }
 
-  /**
-   * @summary Create Shotlist Item
-   */
-  const createShotlistItemApiShotlistsShotlistIdItemsPost = <
-    TData = AxiosResponse<ShotlistItem>,
-  >(
+/**
+ * @summary Create Shotlist Item
+ */
+const createShotlistItemApiShotlistsShotlistIdItemsPost = <TData = AxiosResponse<ShotlistItem>>(
     shotlistId: string,
-    shotlistItemCreate: ShotlistItemCreate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    shotlistItemCreate: ShotlistItemCreate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.post(
       `/api/shotlists/${shotlistId}/items`,
-      shotlistItemCreate,
-      options,
+      shotlistItemCreate,options
     );
-  };
+  }
 
-  /**
-   * @summary Read Shotlist Item
-   */
-  const readShotlistItemApiShotlistItemsItemIdGet = <
-    TData = AxiosResponse<ShotlistItem>,
-  >(
-    itemId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/api/shotlist-items/${itemId}`, options);
-  };
+/**
+ * @summary Read Shotlist Item
+ */
+const readShotlistItemApiShotlistItemsItemIdGet = <TData = AxiosResponse<ShotlistItem>>(
+    itemId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/shotlist-items/${itemId}`,options
+    );
+  }
 
-  /**
-   * @summary Update Shotlist Item
-   */
-  const updateShotlistItemApiShotlistItemsItemIdPut = <
-    TData = AxiosResponse<ShotlistItem>,
-  >(
+/**
+ * @summary Update Shotlist Item
+ */
+const updateShotlistItemApiShotlistItemsItemIdPut = <TData = AxiosResponse<ShotlistItem>>(
     itemId: string,
-    shotlistItemUpdate: ShotlistItemUpdate,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    shotlistItemUpdate: ShotlistItemUpdate, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.put(
       `/api/shotlist-items/${itemId}`,
-      shotlistItemUpdate,
-      options,
+      shotlistItemUpdate,options
     );
-  };
+  }
 
-  /**
-   * @summary Delete Shotlist Item
-   */
-  const deleteShotlistItemApiShotlistItemsItemIdDelete = <
-    TData = AxiosResponse<unknown>,
-  >(
-    itemId: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.delete(`/api/shotlist-items/${itemId}`, options);
-  };
+/**
+ * @summary Delete Shotlist Item
+ */
+const deleteShotlistItemApiShotlistItemsItemIdDelete = <TData = AxiosResponse<unknown>>(
+    itemId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.delete(
+      `/api/shotlist-items/${itemId}`,options
+    );
+  }
 
-  /**
-   * @summary Reorder Shotlist Items
-   */
-  const reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut = <
-    TData = AxiosResponse<ShotlistItem[]>,
-  >(
+/**
+ * @summary Reorder Shotlist Items
+ */
+const reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut = <TData = AxiosResponse<ShotlistItem[]>>(
     shotlistId: string,
-    reorderRequest: ReorderRequest,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
+    reorderRequest: ReorderRequest, options?: AxiosRequestConfig
+ ): Promise<TData> => {
     return axios.default.put(
       `/api/shotlists/${shotlistId}/items/reorder`,
-      reorderRequest,
-      options,
+      reorderRequest,options
     );
-  };
+  }
 
-  /**
-   * @summary Upload Image
-   */
-  const uploadImageApiShotlistItemsItemIdUploadImagePost = <
-    TData = AxiosResponse<ImageResponse>,
-  >(
+/**
+ * @summary Upload Image
+ */
+const uploadImageApiShotlistItemsItemIdUploadImagePost = <TData = AxiosResponse<ImageResponse>>(
     itemId: string,
-    bodyUploadImageApiShotlistItemsItemIdUploadImagePost: BodyUploadImageApiShotlistItemsItemIdUploadImagePost,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    const formData = new FormData();
-    formData.append(
-      `file`,
-      bodyUploadImageApiShotlistItemsItemIdUploadImagePost.file,
-    );
+    bodyUploadImageApiShotlistItemsItemIdUploadImagePost: BodyUploadImageApiShotlistItemsItemIdUploadImagePost, options?: AxiosRequestConfig
+ ): Promise<TData> => {const formData = new FormData();
+formData.append(`file`, bodyUploadImageApiShotlistItemsItemIdUploadImagePost.file)
 
     return axios.default.post(
       `/api/shotlist-items/${itemId}/upload-image`,
-      formData,
-      options,
+      formData,options
     );
-  };
+  }
 
-  /**
-   * @summary Serve Spa
-   */
-  const serveSpaFullPathGet = <TData = AxiosResponse<unknown>>(
-    fullPath: string,
-    options?: AxiosRequestConfig,
-  ): Promise<TData> => {
-    return axios.default.get(`/${fullPath}`, options);
-  };
+/**
+ * @summary Serve Spa
+ */
+const serveSpaFullPathGet = <TData = AxiosResponse<unknown>>(
+    fullPath: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/${fullPath}`,options
+    );
+  }
 
-  return {
-    loginGoogleApiAuthLoginGoogleGet,
-    authGoogleCallbackApiAuthGoogleCallbackGet,
-    logoutApiAuthLogoutPost,
-    getCurrentUserApiAuthMeGet,
-    readClientsApiClientsGet,
-    createClientApiClientsPost,
-    readClientApiClientsClientIdGet,
-    updateClientApiClientsClientIdPut,
-    deleteClientApiClientsClientIdDelete,
-    readProjectsApiProjectsGet,
-    createProjectApiProjectsPost,
-    readProjectApiProjectsProjectIdGet,
-    updateProjectApiProjectsProjectIdPut,
-    deleteProjectApiProjectsProjectIdDelete,
-    readShotlistsApiProjectsProjectIdShotlistsGet,
-    createShotlistApiProjectsProjectIdShotlistsPost,
-    readShotlistApiShotlistsShotlistIdGet,
-    updateShotlistApiShotlistsShotlistIdPut,
-    deleteShotlistApiShotlistsShotlistIdDelete,
-    readShotlistItemsApiShotlistsShotlistIdItemsGet,
-    createShotlistItemApiShotlistsShotlistIdItemsPost,
-    readShotlistItemApiShotlistItemsItemIdGet,
-    updateShotlistItemApiShotlistItemsItemIdPut,
-    deleteShotlistItemApiShotlistItemsItemIdDelete,
-    reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut,
-    uploadImageApiShotlistItemsItemIdUploadImagePost,
-    serveSpaFullPathGet,
-  };
-};
-export type LoginGoogleApiAuthLoginGoogleGetResult = AxiosResponse<unknown>;
-export type AuthGoogleCallbackApiAuthGoogleCallbackGetResult =
-  AxiosResponse<unknown>;
-export type LogoutApiAuthLogoutPostResult = AxiosResponse<unknown>;
-export type GetCurrentUserApiAuthMeGetResult = AxiosResponse<User>;
-export type ReadClientsApiClientsGetResult = AxiosResponse<Client[]>;
-export type CreateClientApiClientsPostResult = AxiosResponse<Client>;
-export type ReadClientApiClientsClientIdGetResult =
-  AxiosResponse<ClientWithProjects>;
-export type UpdateClientApiClientsClientIdPutResult = AxiosResponse<Client>;
-export type DeleteClientApiClientsClientIdDeleteResult = AxiosResponse<unknown>;
-export type ReadProjectsApiProjectsGetResult = AxiosResponse<Project[]>;
-export type CreateProjectApiProjectsPostResult = AxiosResponse<Project>;
-export type ReadProjectApiProjectsProjectIdGetResult =
-  AxiosResponse<ProjectWithShotlists>;
-export type UpdateProjectApiProjectsProjectIdPutResult = AxiosResponse<Project>;
-export type DeleteProjectApiProjectsProjectIdDeleteResult =
-  AxiosResponse<unknown>;
-export type ReadShotlistsApiProjectsProjectIdShotlistsGetResult = AxiosResponse<
-  Shotlist[]
->;
-export type CreateShotlistApiProjectsProjectIdShotlistsPostResult =
-  AxiosResponse<Shotlist>;
-export type ReadShotlistApiShotlistsShotlistIdGetResult =
-  AxiosResponse<ShotlistWithItems>;
-export type UpdateShotlistApiShotlistsShotlistIdPutResult =
-  AxiosResponse<Shotlist>;
-export type DeleteShotlistApiShotlistsShotlistIdDeleteResult =
-  AxiosResponse<unknown>;
-export type ReadShotlistItemsApiShotlistsShotlistIdItemsGetResult =
-  AxiosResponse<ShotlistItem[]>;
-export type CreateShotlistItemApiShotlistsShotlistIdItemsPostResult =
-  AxiosResponse<ShotlistItem>;
-export type ReadShotlistItemApiShotlistItemsItemIdGetResult =
-  AxiosResponse<ShotlistItem>;
-export type UpdateShotlistItemApiShotlistItemsItemIdPutResult =
-  AxiosResponse<ShotlistItem>;
-export type DeleteShotlistItemApiShotlistItemsItemIdDeleteResult =
-  AxiosResponse<unknown>;
-export type ReorderShotlistItemsApiShotlistsShotlistIdItemsReorderPutResult =
-  AxiosResponse<ShotlistItem[]>;
-export type UploadImageApiShotlistItemsItemIdUploadImagePostResult =
-  AxiosResponse<ImageResponse>;
-export type ServeSpaFullPathGetResult = AxiosResponse<unknown>;
+return {loginGoogleApiAuthLoginGoogleGet,authGoogleCallbackApiAuthGoogleCallbackGet,logoutApiAuthLogoutPost,getCurrentUserApiAuthMeGet,readClientsApiClientsGet,createClientApiClientsPost,readClientApiClientsClientIdGet,updateClientApiClientsClientIdPut,deleteClientApiClientsClientIdDelete,readProjectsApiProjectsGet,createProjectApiProjectsPost,readProjectApiProjectsProjectIdGet,updateProjectApiProjectsProjectIdPut,deleteProjectApiProjectsProjectIdDelete,readShotlistsApiProjectsProjectIdShotlistsGet,createShotlistApiProjectsProjectIdShotlistsPost,readShotlistApiShotlistsShotlistIdGet,updateShotlistApiShotlistsShotlistIdPut,deleteShotlistApiShotlistsShotlistIdDelete,readShotlistItemsApiShotlistsShotlistIdItemsGet,createShotlistItemApiShotlistsShotlistIdItemsPost,readShotlistItemApiShotlistItemsItemIdGet,updateShotlistItemApiShotlistItemsItemIdPut,deleteShotlistItemApiShotlistItemsItemIdDelete,reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut,uploadImageApiShotlistItemsItemIdUploadImagePost,serveSpaFullPathGet}};
+export type LoginGoogleApiAuthLoginGoogleGetResult = AxiosResponse<unknown>
+export type AuthGoogleCallbackApiAuthGoogleCallbackGetResult = AxiosResponse<unknown>
+export type LogoutApiAuthLogoutPostResult = AxiosResponse<unknown>
+export type GetCurrentUserApiAuthMeGetResult = AxiosResponse<User>
+export type ReadClientsApiClientsGetResult = AxiosResponse<Client[]>
+export type CreateClientApiClientsPostResult = AxiosResponse<Client>
+export type ReadClientApiClientsClientIdGetResult = AxiosResponse<ClientWithProjects>
+export type UpdateClientApiClientsClientIdPutResult = AxiosResponse<Client>
+export type DeleteClientApiClientsClientIdDeleteResult = AxiosResponse<unknown>
+export type ReadProjectsApiProjectsGetResult = AxiosResponse<Project[]>
+export type CreateProjectApiProjectsPostResult = AxiosResponse<Project>
+export type ReadProjectApiProjectsProjectIdGetResult = AxiosResponse<ProjectWithShotlists>
+export type UpdateProjectApiProjectsProjectIdPutResult = AxiosResponse<Project>
+export type DeleteProjectApiProjectsProjectIdDeleteResult = AxiosResponse<unknown>
+export type ReadShotlistsApiProjectsProjectIdShotlistsGetResult = AxiosResponse<Shotlist[]>
+export type CreateShotlistApiProjectsProjectIdShotlistsPostResult = AxiosResponse<Shotlist>
+export type ReadShotlistApiShotlistsShotlistIdGetResult = AxiosResponse<ShotlistWithItems>
+export type UpdateShotlistApiShotlistsShotlistIdPutResult = AxiosResponse<Shotlist>
+export type DeleteShotlistApiShotlistsShotlistIdDeleteResult = AxiosResponse<unknown>
+export type ReadShotlistItemsApiShotlistsShotlistIdItemsGetResult = AxiosResponse<ShotlistItem[]>
+export type CreateShotlistItemApiShotlistsShotlistIdItemsPostResult = AxiosResponse<ShotlistItem>
+export type ReadShotlistItemApiShotlistItemsItemIdGetResult = AxiosResponse<ShotlistItem>
+export type UpdateShotlistItemApiShotlistItemsItemIdPutResult = AxiosResponse<ShotlistItem>
+export type DeleteShotlistItemApiShotlistItemsItemIdDeleteResult = AxiosResponse<unknown>
+export type ReorderShotlistItemsApiShotlistsShotlistIdItemsReorderPutResult = AxiosResponse<ShotlistItem[]>
+export type UploadImageApiShotlistItemsItemIdUploadImagePostResult = AxiosResponse<ImageResponse>
+export type ServeSpaFullPathGetResult = AxiosResponse<unknown>
