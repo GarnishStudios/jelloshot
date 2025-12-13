@@ -547,6 +547,18 @@ limit?: number;
 
 export const getCallSheetAPI = () => {
 /**
+ * Health check endpoint for monitoring and deployment systems
+ * @summary Health Check
+ */
+const healthCheckApiV1HealthGet = <TData = AxiosResponse<unknown>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `/api/v1/health`,options
+    );
+  }
+
+/**
  * @summary Login Google
  */
 const loginGoogleApiAuthLoginGoogleGet = <TData = AxiosResponse<unknown>>(
@@ -870,7 +882,8 @@ const serveSpaFullPathGet = <TData = AxiosResponse<unknown>>(
     );
   }
 
-return {loginGoogleApiAuthLoginGoogleGet,authGoogleCallbackApiAuthGoogleCallbackGet,logoutApiAuthLogoutPost,getCurrentUserApiAuthMeGet,readClientsApiClientsGet,createClientApiClientsPost,readClientApiClientsClientIdGet,updateClientApiClientsClientIdPut,deleteClientApiClientsClientIdDelete,readProjectsApiProjectsGet,createProjectApiProjectsPost,readProjectApiProjectsProjectIdGet,updateProjectApiProjectsProjectIdPut,deleteProjectApiProjectsProjectIdDelete,readShotlistsApiProjectsProjectIdShotlistsGet,createShotlistApiProjectsProjectIdShotlistsPost,readShotlistApiShotlistsShotlistIdGet,updateShotlistApiShotlistsShotlistIdPut,deleteShotlistApiShotlistsShotlistIdDelete,readShotlistItemsApiShotlistsShotlistIdItemsGet,createShotlistItemApiShotlistsShotlistIdItemsPost,readShotlistItemApiShotlistItemsItemIdGet,updateShotlistItemApiShotlistItemsItemIdPut,deleteShotlistItemApiShotlistItemsItemIdDelete,reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut,uploadImageApiShotlistItemsItemIdUploadImagePost,serveSpaFullPathGet}};
+return {healthCheckApiV1HealthGet,loginGoogleApiAuthLoginGoogleGet,authGoogleCallbackApiAuthGoogleCallbackGet,logoutApiAuthLogoutPost,getCurrentUserApiAuthMeGet,readClientsApiClientsGet,createClientApiClientsPost,readClientApiClientsClientIdGet,updateClientApiClientsClientIdPut,deleteClientApiClientsClientIdDelete,readProjectsApiProjectsGet,createProjectApiProjectsPost,readProjectApiProjectsProjectIdGet,updateProjectApiProjectsProjectIdPut,deleteProjectApiProjectsProjectIdDelete,readShotlistsApiProjectsProjectIdShotlistsGet,createShotlistApiProjectsProjectIdShotlistsPost,readShotlistApiShotlistsShotlistIdGet,updateShotlistApiShotlistsShotlistIdPut,deleteShotlistApiShotlistsShotlistIdDelete,readShotlistItemsApiShotlistsShotlistIdItemsGet,createShotlistItemApiShotlistsShotlistIdItemsPost,readShotlistItemApiShotlistItemsItemIdGet,updateShotlistItemApiShotlistItemsItemIdPut,deleteShotlistItemApiShotlistItemsItemIdDelete,reorderShotlistItemsApiShotlistsShotlistIdItemsReorderPut,uploadImageApiShotlistItemsItemIdUploadImagePost,serveSpaFullPathGet}};
+export type HealthCheckApiV1HealthGetResult = AxiosResponse<unknown>
 export type LoginGoogleApiAuthLoginGoogleGetResult = AxiosResponse<unknown>
 export type AuthGoogleCallbackApiAuthGoogleCallbackGetResult = AxiosResponse<unknown>
 export type LogoutApiAuthLogoutPostResult = AxiosResponse<unknown>

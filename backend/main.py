@@ -64,6 +64,27 @@ app.add_middleware(
     same_site="lax",
 )
 
+
+# Health check endpoint
+@app.get("/api/v1/health")
+async def health_check():
+    """Health check endpoint for monitoring and deployment systems"""
+    try:
+        # Test database connection
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        db_status = "healthy"
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+
+    return {
+        "status": "ok" if db_status == "healthy" else "degraded",
+        "database": db_status,
+        "version": settings.VERSION,
+        "environment": settings.ENVIRONMENT,
+    }
+
+
 # Auth routes
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
