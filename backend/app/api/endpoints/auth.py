@@ -61,8 +61,8 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
     # Set session
     request.session["user_id"] = str(user.id)
 
-    # Redirect to clients page
-    return RedirectResponse(url=f"{settings.FRONTEND_URL}")
+    # Redirect to home page
+    return RedirectResponse(url="/")
 
 
 @router.post("/logout")
