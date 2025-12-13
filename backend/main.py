@@ -64,6 +64,7 @@ app.add_middleware(
     same_site="lax",
 )
 
+
 # Health check endpoint
 @app.get("/api/v1/health")
 async def health_check():
@@ -75,12 +76,12 @@ async def health_check():
         db_status = "healthy"
     except Exception as e:
         db_status = f"unhealthy: {str(e)}"
-    
+
     return {
         "status": "ok" if db_status == "healthy" else "degraded",
         "database": db_status,
         "version": settings.VERSION,
-        "environment": settings.ENVIRONMENT
+        "environment": settings.ENVIRONMENT,
     }
 
 
