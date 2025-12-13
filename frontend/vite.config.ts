@@ -6,7 +6,7 @@ import { resolve } from "path";
 export default defineConfig({
   // Set the base path to relative to ensure paths generated are relative to index.html
   // so we can copy the static files to the backend
-  base: './',
+  base: "./",
   plugins: [react()],
   resolve: {
     alias: {

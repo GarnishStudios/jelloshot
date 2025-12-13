@@ -48,10 +48,7 @@ app.add_middleware(
 # Auth routes
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
-# User routes (optional, if we want /me to be under /api/users/me, but auth router handles /me)
-# app.include_router(users.router, prefix="/api/users", tags=["users"])
-
-# Existing application routes
+# Application routes
 app.include_router(clients.router, prefix="/api/clients", tags=["Clients"])
 app.include_router(projects.router, prefix="/api/projects", tags=["Projects"])
 app.include_router(shotlists.router, prefix="/api", tags=["Shotlists"])
@@ -72,7 +69,7 @@ async def serve_spa(full_path: str):
     static_file = os.path.join(os.getcwd(), "static", full_path)
     if os.path.isfile(static_file) and not full_path.startswith("api"):
         return FileResponse(static_file)
-    
+
     # Otherwise serve the SPA index.html for client-side routing
     index_path = os.path.join(os.getcwd(), "static", "index.html")
     return FileResponse(index_path)
