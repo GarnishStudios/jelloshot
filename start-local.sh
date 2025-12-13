@@ -1,61 +1,48 @@
 #!/bin/bash
 
 # Start Local Development Servers
-# This script starts the backend and frontend in separate processes
+# This script starts the backend, database, and frontend watcher
 
 echo "🚀 Starting JelloShot Local Development..."
 echo ""
 
-# Check if database is running
-if ! docker-compose ps postgres | grep -q "Up"; then
-    echo "📦 Starting PostgreSQL database..."
-    docker-compose up -d postgres
-    sleep 3
-fi
+# Start Docker Compose services in background
+echo "🐳 Starting Docker services (PostgreSQL + Backend)..."
+docker compose -f docker-compose.dev.yml up -d
 
-# Start backend in background
-echo "🐍 Starting Backend (FastAPI) on http://localhost:8000"
-cd backend
-if [ ! -d "venv" ]; then
-    echo "Creating Python virtual environment..."
-    python3 -m venv venv
-fi
-source venv/bin/activate
-pip install -q -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000 > ../backend.log 2>&1 &
-BACKEND_PID=$!
-cd ..
+# Wait for services to start
+echo "⏳ Waiting for services to be ready..."
+sleep 5
 
-# Wait a moment for backend to start
-sleep 2
-
-# Start frontend
-echo "⚛️  Starting Frontend (React) on http://localhost:5173"
+# Start frontend watch mode
+echo "⚛️  Starting Frontend watch mode..."
 cd frontend
 if [ ! -d "node_modules" ]; then
     echo "Installing npm dependencies..."
     npm install
 fi
-npm run dev > ../frontend.log 2>&1 &
+npm run watch > ../frontend-watch.log 2>&1 &
 FRONTEND_PID=$!
 cd ..
 
 echo ""
-echo "✅ Servers starting..."
+echo "✅ Development environment is running!"
 echo ""
-echo "📍 Backend API: http://localhost:8000"
-echo "📍 Frontend App: http://localhost:5173"
+echo "📍 Application: http://localhost:8000"
 echo "📍 API Docs: http://localhost:8000/api/docs"
+echo "📍 Database: localhost:5432"
 echo ""
 echo "📝 Logs:"
-echo "   Backend: tail -f backend.log"
-echo "   Frontend: tail -f frontend.log"
+echo "   Docker services: docker compose -f docker-compose.dev.yml logs -f"
+echo "   Frontend watch: tail -f frontend-watch.log"
 echo ""
-echo "🛑 To stop: Press Ctrl+C or run: kill $BACKEND_PID $FRONTEND_PID"
+echo "🛑 To stop:"
+echo "   Frontend: Press Ctrl+C"
+echo "   Docker services: docker compose -f docker-compose.dev.yml down"
 echo ""
 
 # Wait for user interrupt
-trap "kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit" INT TERM
+trap "kill $FRONTEND_PID 2>/dev/null; docker compose -f docker-compose.dev.yml down; exit" INT TERM
 wait
 
 

@@ -557,7 +557,7 @@ export const ShotlistItemCard: React.FC<ShotlistItemCardProps> = ({
                     <div className="space-y-3">
                       <div className="relative w-full max-w-[300px] border border-border rounded-lg overflow-hidden bg-card">
                         <img
-                          src={`http://localhost:8000${item.shot_reference_image}`}
+                          src={item.shot_reference_image}
                           alt="Reference"
                           className="w-full h-auto object-contain"
                           onError={(e) => {

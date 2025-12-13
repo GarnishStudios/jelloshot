@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
 
+    # Environment (development, staging, production)
+    ENVIRONMENT: str = "development"
+
     # Database connection components
     DATABASE_USER: str = "postgres"
     DATABASE_PASSWORD: str = "postgres"
@@ -33,13 +36,6 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # Parse CORS_ORIGINS as a comma-separated string from environment
-    CORS_ORIGINS: Union[str, List[str]] = (
-        "http://localhost:5173,http://localhost:5174,http://localhost:3000"
-    )
-
-    FRONTEND_URL: str = "http://localhost:5173"
-
     UPLOAD_DIR: str = "uploads"
     MAX_FILE_SIZE: int = 5 * 1024 * 1024  # 5MB
     ALLOWED_IMAGE_TYPES: List[str] = [
@@ -48,13 +44,6 @@ class Settings(BaseSettings):
         "image/gif",
         "image/webp",
     ]
-
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
 
     model_config = {"env_file": ".env", "case_sensitive": True}
 

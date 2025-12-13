@@ -1,13 +1,14 @@
+import os
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from app.api.endpoints import projects, shotlists, shotlist_items, clients
 from app.core.config import settings
 from app.db.database import engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import text
-import os
-
+from starlette.middleware.sessions import SessionMiddleware
+from app.api.endpoints import auth
 from contextlib import asynccontextmanager
 
 
@@ -30,63 +31,45 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Call Sheet API",
-    description="Production management platform for creating and managing call sheets",
+    description="Create and manage call sheets",
     version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
+    docs_url="/api/docs" if settings.ENVIRONMENT != "production" else None,
+    redoc_url="/api/redoc" if settings.ENVIRONMENT != "production" else None,
     lifespan=lifespan,
 )
-
-print(f"🌐 CORS Origins loaded: {settings.CORS_ORIGINS}")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-    ],  # Specific origins required for credentials
-    allow_credentials=True,  # Required for cookies
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Create static directory if it doesn't exist
-os.makedirs("static/uploads", exist_ok=True)
-
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-from starlette.middleware.sessions import SessionMiddleware
-from app.api.endpoints import auth
-
-# ... imports ...
 
 app.add_middleware(
     SessionMiddleware,
     secret_key=settings.SESSION_SECRET,
-    https_only=False,  # Set to True in production
+    https_only=True,
     same_site="lax",
 )
-
-# ... cors middleware ...
 
 # Auth routes
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
-# User routes (optional, if we want /me to be under /api/users/me, but auth router handles /me)
-# app.include_router(users.router, prefix="/api/users", tags=["users"])
-
-# Existing application routes
+# Application routes
 app.include_router(clients.router, prefix="/api/clients", tags=["Clients"])
 app.include_router(projects.router, prefix="/api/projects", tags=["Projects"])
 app.include_router(shotlists.router, prefix="/api", tags=["Shotlists"])
 app.include_router(shotlist_items.router, prefix="/api", tags=["Shotlist Items"])
 
+# Mount static assets (JS, CSS, images) - must be before catch-all
+app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
 
-@app.get("/")
-def read_root():
-    return {"message": "Call Sheet API", "version": "1.0.0"}
+# Serve uploaded files
+if os.path.exists("uploads"):
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
-@app.get("/health")
-def health_check():
-    return {"status": "healthy"}
+# Catch-all route to serve the SPA for client-side routing
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    # Serve static files from the dist root (like vite.svg)
+    static_file = os.path.join(os.getcwd(), "static", full_path)
+    if os.path.isfile(static_file) and not full_path.startswith("api"):
+        return FileResponse(static_file)
+
+    # Otherwise serve the SPA index.html for client-side routing
+    index_path = os.path.join(os.getcwd(), "static", "index.html")
+    return FileResponse(index_path)

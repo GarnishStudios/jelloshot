@@ -40,7 +40,7 @@ export const Layout: React.FC = () => {
                 <>
                   <ThemeSwitcher />
                   <span className="text-sm text-muted-foreground hidden md:inline">
-                    {user.full_name || user.username}
+                    {user.full_name || user.email}
                   </span>
                   <Button
                     onClick={handleLogout}

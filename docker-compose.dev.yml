@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -15,12 +15,14 @@ services:
     networks:
       - callsheet_network
 
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: callsheet_backend
+      target: backend
+    container_name: callsheet_app
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       DATABASE_HOSTNAME: ${DATABASE_HOSTNAME:-postgres}
@@ -30,37 +32,19 @@ services:
       SESSION_SECRET: ${SESSION_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://frontend:5173}
     volumes:
-      - ./backend:/app
-      - backend_uploads:/app/uploads
+      - ./backend:/backend
+      - ./frontend/dist:/backend/static
     ports:
       - "8000:8000"
     networks:
       - callsheet_network
-    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: callsheet_frontend
-    environment:
-      VITE_API_URL: http://localhost:8000
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "5173:5173"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
-      - backend
-    networks:
-      - callsheet_network
-    command: npm run dev -- --host
+      - postgres
 
 volumes:
   postgres_data:
-  backend_uploads:
 
 networks:
   callsheet_network:

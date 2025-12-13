@@ -56,6 +56,7 @@ function App() {
             <Route path="clients/:clientId" element={<ClientDetail />} />
             <Route path="clients" element={<Clients />} />
             <Route path="projects/:id/shotlist" element={<ShotlistDetail />} />
+            <Route path="*" element={<Navigate to="/clients" replace />} />
           </Route>
         </Routes>
       </Router>
