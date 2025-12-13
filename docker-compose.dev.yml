@@ -22,6 +22,7 @@ services:
       target: backend
     container_name: callsheet_app
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       DATABASE_HOSTNAME: ${DATABASE_HOSTNAME:-postgres}

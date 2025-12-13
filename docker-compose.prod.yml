@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: callsheet_app
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY: ${SECRET_KEY}
       SESSION_SECRET: ${SESSION_SECRET}
