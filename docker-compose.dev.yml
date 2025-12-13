@@ -23,11 +23,7 @@ services:
     container_name: callsheet_app
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
-      DATABASE_USER: ${DATABASE_USER:-postgres}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
-      DATABASE_HOSTNAME: ${DATABASE_HOSTNAME:-postgres}
-      DATABASE_PORT: ${DATABASE_PORT:-5432}
-      DATABASE_NAME: ${DATABASE_NAME:-callsheet}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/callsheet}
       SECRET_KEY: ${SECRET_KEY:-your-secret-key-here-change-in-production}
       SESSION_SECRET: ${SESSION_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}

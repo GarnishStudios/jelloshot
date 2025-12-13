@@ -1,0 +1,10 @@
+# Auto-generated files
+src/type-gen/api.ts
+src/type-gen/openapi.json
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+

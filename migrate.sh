@@ -82,11 +82,7 @@ docker run --rm \
     --network jelloshot_callsheet_network \
     -v "$(pwd)/backend:/backend" \
     -w /backend \
-    -e DATABASE_USER=postgres \
-    -e DATABASE_PASSWORD=postgres \
-    -e DATABASE_HOSTNAME=postgres \
-    -e DATABASE_PORT=5432 \
-    -e DATABASE_NAME=callsheet \
+    -e DATABASE_URL=postgresql://postgres:postgres@postgres:5432/callsheet \
     python:3.13-slim \
     bash -c "pip install -q alembic psycopg2-binary sqlalchemy pydantic pydantic-settings && $ALEMBIC_CMD"
 
