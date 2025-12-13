@@ -1,4 +1,4 @@
 #!/bin/bash
-# hooks/pre-commit
+# hooks/pre-push
 make -j4 all
 exit 0
