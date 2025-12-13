@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator, computed_field, ValidationInfo
+from pydantic import field_validator, ValidationInfo
 from typing import List, Union
 import os
 import secrets as import_secrets
@@ -13,17 +13,8 @@ class Settings(BaseSettings):
     # Environment (development, staging, production)
     ENVIRONMENT: str = "development"
 
-    # Database connection components
-    DATABASE_USER: str = "postgres"
-    DATABASE_PASSWORD: str = "postgres"
-    DATABASE_HOSTNAME: str = "postgres"  # Docker service name
-    DATABASE_PORT: str = "5432"
-    DATABASE_NAME: str = "callsheet"
-
-    @computed_field
-    @property
-    def DATABASE_URL(self) -> str:
-        return f"postgresql://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOSTNAME}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+    # Database connection
+    DATABASE_URL: str = "postgresql://postgres:postgres@postgres:5432/callsheet"
 
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     # If not set, generate a random secret (invalidates sessions on restart)
